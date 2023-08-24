@@ -31,5 +31,6 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <!--This is a test comment made by Bradley-->
+    <!--This is james's test coment-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
