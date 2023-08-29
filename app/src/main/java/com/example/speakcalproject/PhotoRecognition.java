@@ -94,34 +94,37 @@ public class PhotoRecognition extends AppCompatActivity {
 
     public void classifyImage(Bitmap bitmap)
     {
-        Bitmap floatImage = Bitmap.createBitmap(224,224,Bitmap.Config.ARGB_8888);
-
-        for(int x = 0; x < 224; x++){
-            for (int y = 0; y < 224; y++){
-                int pixel = bitmap.getPixel(x,y);
-                int alpha = Color.alpha(pixel);
-                int red = Color.red(pixel);
-                int green = Color.green(pixel);
-                int blue = Color.blue(pixel);
-
-                floatImage.setPixel(x,y,Color.argb(alpha,(int) red,(int) green, (int) blue));
-            }
-        }
-
         try {
             LiteModelAiyVisionClassifierFoodV11 model = LiteModelAiyVisionClassifierFoodV11.newInstance(getApplicationContext());
 
             // Creates inputs for reference.
-            TensorImage image = TensorImage.fromBitmap(floatImage);
+            TensorImage image = TensorImage.fromBitmap(bitmap);
 
             // Runs model inference and gets result.
             LiteModelAiyVisionClassifierFoodV11.Outputs outputs = model.process(image);
             List<Category> probability = outputs.getProbabilityAsCategoryList();
 
-            Category cg = probability.get(0);
-            String output = cg.toString();
-            result.setText(output);
+            float[] numbers = new float[probability.size()];
+            int maxPos = 0;
+            float maxScore = 0;
 
+            for(int i = 0; i < probability.size(); i++)
+            {
+                if(probability.get(i).getScore() > maxScore)
+                {
+                    maxScore = probability.get(i).getScore();
+                    maxPos = i;
+                }
+            }
+
+            String output = "";
+            if(maxPos == 0) {
+               output = "no match";
+            } else {
+                output += "Item: "+probability.get(maxPos).getLabel()+"\n"+"Score: "+probability.get(maxPos).getScore();
+            }
+
+            result.setText(output);
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
