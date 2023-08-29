@@ -4,16 +4,20 @@ import static android.provider.MediaStore.*;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
@@ -30,9 +34,13 @@ import java.util.List;
 
 public class PhotoRecognition extends AppCompatActivity {
 
-    Button camera,gallery;
-    ImageView imageView;
-    TextView result;
+    public Button camera,gallery;
+    public ImageView imageView;
+    public TextView result;
+
+    private float foodWeight;
+    private String foodName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,15 +129,109 @@ public class PhotoRecognition extends AppCompatActivity {
             if(maxPos == 0) {
                output = "no match";
             } else {
-                output += "Item: "+probability.get(maxPos).getLabel()+"\n"+"Score: "+probability.get(maxPos).getScore();
+                output += "Item: "+probability.get(maxPos).getLabel();
             }
-
+            foodName = probability.get(maxPos).getLabel();
+            foodWeight = 0;
             result.setText(output);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Is the result " + foodName+ " correct?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    inputCorrectAnswerDialog(2, foodName);
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    inputCorrectAnswerDialog(1, foodName);
+                }
+            });
+            builder.show();
+
+
+
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
             // TODO Handle the exception
         }
 
+    }
+
+    // status 1 == need to correct answer and weight
+    // status 2 == just need to input weight
+    public void inputCorrectAnswerDialog(int status, String foodName){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        if(status == 1){
+            builder.setTitle("Enter correct name and weight");
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.dialog_weight_name,null);
+            builder.setView(dialogView);
+
+            final EditText nameEditText = dialogView.findViewById(R.id.editTextName);
+            final EditText weightText = dialogView.findViewById(R.id.editTextWeight);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String name = nameEditText.getText().toString();
+                    String weight = weightText.getText().toString();
+                    float weight_number = Float.parseFloat(weight);
+
+                    handleNameandWeight(name,weight_number);
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+        else if(status == 2){
+            builder.setTitle("Enter correct weight");
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.dialog_weight_name,null);
+            builder.setView(dialogView);
+
+            final EditText nameEditText = dialogView.findViewById(R.id.editTextName);
+            final EditText weightText = dialogView.findViewById(R.id.editTextWeight);
+            nameEditText.setVisibility(View.GONE);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String weight = weightText.getText().toString();
+                    float weight_number = Float.parseFloat(weight);
+
+                    handleNameandWeight(foodName,weight_number);
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+    }
+
+    public void handleNameandWeight(String foodName, float foodWeight)
+    {
+       this.foodWeight = foodWeight;
+       this.foodName = foodName;
+       result.setText("Item: "+this.foodName+"\nWeight: "+this.foodWeight+" g");
     }
 }
