@@ -4,7 +4,6 @@ import static android.provider.MediaStore.*;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +13,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,13 +22,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
 import android.graphics.Bitmap;
+import android.widget.Toast;
 
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
 
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +38,7 @@ public class PhotoRecognition extends AppCompatActivity {
     public ImageView imageView;
     public TextView result;
 
+    public FoodInfo foodInfo;
     private float foodWeight;
     private String foodName;
 
@@ -131,6 +132,7 @@ public class PhotoRecognition extends AppCompatActivity {
             } else {
                 output += "Item: "+probability.get(maxPos).getLabel();
             }
+
             foodName = probability.get(maxPos).getLabel();
             foodWeight = 0;
             result.setText(output);
@@ -182,9 +184,13 @@ public class PhotoRecognition extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     String name = nameEditText.getText().toString();
                     String weight = weightText.getText().toString();
-                    float weight_number = Float.parseFloat(weight);
 
-                    handleNameandWeight(name,weight_number);
+                    if(TextUtils.isEmpty(name) || TextUtils.isEmpty(weight)) {
+                        Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                    }else{
+                        float weight_number = Float.parseFloat(weight);
+                        handleNameandWeight(name,weight_number);
+                    }
                 }
             });
 
@@ -211,9 +217,12 @@ public class PhotoRecognition extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String weight = weightText.getText().toString();
-                    float weight_number = Float.parseFloat(weight);
-
-                    handleNameandWeight(foodName,weight_number);
+                    if(TextUtils.isEmpty(weight)) {
+                        Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                    }else{
+                        float weight_number = Float.parseFloat(weight);
+                        handleNameandWeight(foodName,weight_number);
+                    }
                 }
             });
 
@@ -230,8 +239,12 @@ public class PhotoRecognition extends AppCompatActivity {
 
     public void handleNameandWeight(String foodName, float foodWeight)
     {
-       this.foodWeight = foodWeight;
-       this.foodName = foodName;
-       result.setText("Item: "+this.foodName+"\nWeight: "+this.foodWeight+" g");
+        foodInfo = new FoodInfo();
+        foodInfo.setFoodWeight(foodWeight);
+        foodInfo.setFoodName(foodName);
+        this.foodWeight = foodWeight;
+        this.foodName = foodName;
+        result.setText("Item: "+this.foodName+"\nWeight: "+this.foodWeight+" g");
+
     }
 }
