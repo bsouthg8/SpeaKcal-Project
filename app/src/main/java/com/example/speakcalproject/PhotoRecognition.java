@@ -118,6 +118,10 @@ public class PhotoRecognition extends AppCompatActivity {
             LiteModelAiyVisionClassifierFoodV11.Outputs outputs = model.process(image);
             List<Category> probability = outputs.getProbabilityAsCategoryList();
 
+            Category cg = probability.get(0);
+            String output = cg.toString();
+            result.setText(output);
+
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
