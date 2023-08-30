@@ -5,7 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PhotoRecognition">
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/button3"
+        android:text="Modify Food Info"
+        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +34,7 @@
         android:id="@+id/button2"
         android:text="Launch Gallery"
         android:textAllCaps="false"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/button3"
         android:textSize="21sp"
         android:textStyle="bold"
         />

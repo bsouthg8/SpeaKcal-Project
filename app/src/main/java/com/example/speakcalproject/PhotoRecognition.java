@@ -34,9 +34,10 @@ import java.util.List;
 
 public class PhotoRecognition extends AppCompatActivity {
 
-    public Button camera,gallery;
-    public ImageView imageView;
-    public TextView result;
+    private Button camera,gallery,modify;
+    private ImageView imageView;
+    private TextView result;
+
 
     public FoodInfo foodInfo;
     private float foodWeight;
@@ -49,6 +50,8 @@ public class PhotoRecognition extends AppCompatActivity {
 
         camera = findViewById(R.id.button);
         gallery = findViewById(R.id.button2);
+        modify = findViewById(R.id.button3);
+
         result = findViewById(R.id.result);
         imageView = findViewById(R.id.imageView);
 
@@ -69,6 +72,13 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 Intent cameraIntent = new Intent(Intent.ACTION_PICK, Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(cameraIntent, 1);
+            }
+        });
+
+        modify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               inputCorrectAnswerDialog(1, null);
             }
         });
     }
@@ -129,11 +139,12 @@ public class PhotoRecognition extends AppCompatActivity {
             String output = "";
             if(maxPos == 0) {
                output = "no match";
+                foodName = null;
             } else {
                 output += "Item: "+probability.get(maxPos).getLabel();
+                foodName = probability.get(maxPos).getLabel();
             }
 
-            foodName = probability.get(maxPos).getLabel();
             foodWeight = 0;
             result.setText(output);
 
@@ -154,8 +165,6 @@ public class PhotoRecognition extends AppCompatActivity {
                 }
             });
             builder.show();
-
-
 
             // Releases model resources if no longer used.
             model.close();
@@ -189,7 +198,7 @@ public class PhotoRecognition extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
                     }else{
                         float weight_number = Float.parseFloat(weight);
-                        handleNameandWeight(name,weight_number);
+                        handleNameAndWeight(name,weight_number);
                     }
                 }
             });
@@ -221,7 +230,7 @@ public class PhotoRecognition extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
                     }else{
                         float weight_number = Float.parseFloat(weight);
-                        handleNameandWeight(foodName,weight_number);
+                        handleNameAndWeight(foodName,weight_number);
                     }
                 }
             });
@@ -237,7 +246,7 @@ public class PhotoRecognition extends AppCompatActivity {
         }
     }
 
-    public void handleNameandWeight(String foodName, float foodWeight)
+    public void handleNameAndWeight(String foodName, float foodWeight)
     {
         foodInfo = new FoodInfo();
         foodInfo.setFoodWeight(foodWeight);
