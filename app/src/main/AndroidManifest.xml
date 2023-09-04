@@ -5,7 +5,9 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,9 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeaKcalProject"
         tools:targetApi="31">
+        <activity android:name=".PhotoRecognition"
+            android:exported="false"
+            />
 
         <activity
-            android:name=".PhotoRecognition"
+            android:name=".DatabaseManagementActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

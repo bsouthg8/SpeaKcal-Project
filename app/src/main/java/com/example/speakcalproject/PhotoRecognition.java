@@ -5,6 +5,7 @@ import static android.provider.MediaStore.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,8 @@ import android.graphics.Bitmap;
 import android.widget.Toast;
 
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
@@ -37,11 +40,11 @@ public class PhotoRecognition extends AppCompatActivity {
     private Button camera,gallery,modify;
     private ImageView imageView;
     private TextView result;
-
-
     public FoodInfo foodInfo;
     private float foodWeight;
+    private float foodCalories;
     private String foodName;
+    private FirebaseFirestore ff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,9 @@ public class PhotoRecognition extends AppCompatActivity {
 
         result = findViewById(R.id.result);
         imageView = findViewById(R.id.imageView);
+
+        FirebaseApp.initializeApp(getApplicationContext());
+        ff = FirebaseFirestore.getInstance();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +91,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK){
+        if(resultCode == RESULT_OK && requestCode != 2){
             if(requestCode == 3){
                 Bitmap image= (Bitmap) data.getExtras().get("data");
                 int dimension = Math.min(image.getHeight(),image.getWidth());
@@ -94,7 +100,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 image = Bitmap.createScaledBitmap(image,224,224,false);
                 classifyImage(image);
-            }else{
+            }else {
                 Uri dat = data.getData();
                 Bitmap image = null;
                 try{
@@ -106,6 +112,12 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 image = Bitmap.createScaledBitmap(image,224,224,false);
                 classifyImage(image);
+            }
+        } else if (resultCode == RESULT_OK && requestCode == 2) {
+            if(data != null) {
+                foodCalories = Float.parseFloat(data.getStringExtra("result"));
+                foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
+                result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -182,12 +194,13 @@ public class PhotoRecognition extends AppCompatActivity {
         if(status == 1){
             builder.setTitle("Enter correct name and weight");
             LayoutInflater inflater = getLayoutInflater();
-            View dialogView = inflater.inflate(R.layout.dialog_weight_name,null);
+            View dialogView = inflater.inflate(R.layout.dialog_weight_name_calories,null);
             builder.setView(dialogView);
 
             final EditText nameEditText = dialogView.findViewById(R.id.editTextName);
             final EditText weightText = dialogView.findViewById(R.id.editTextWeight);
-
+            final EditText caloriesText = dialogView.findViewById(R.id.editTextKcalAmount);
+            caloriesText.setVisibility(View.GONE);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -215,12 +228,14 @@ public class PhotoRecognition extends AppCompatActivity {
         else if(status == 2){
             builder.setTitle("Enter correct weight");
             LayoutInflater inflater = getLayoutInflater();
-            View dialogView = inflater.inflate(R.layout.dialog_weight_name,null);
+            View dialogView = inflater.inflate(R.layout.dialog_weight_name_calories,null);
             builder.setView(dialogView);
 
             final EditText nameEditText = dialogView.findViewById(R.id.editTextName);
             final EditText weightText = dialogView.findViewById(R.id.editTextWeight);
+            final EditText caloriesText = dialogView.findViewById(R.id.editTextKcalAmount);
             nameEditText.setVisibility(View.GONE);
+            caloriesText.setVisibility(View.GONE);
 
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
@@ -253,7 +268,12 @@ public class PhotoRecognition extends AppCompatActivity {
         foodInfo.setFoodName(foodName);
         this.foodWeight = foodWeight;
         this.foodName = foodName;
-        result.setText("Item: "+this.foodName+"\nWeight: "+this.foodWeight+" g");
 
+        Intent intent = new Intent(this, DatabaseManagementActivity.class);
+        intent.putExtra("foodName",foodInfo.getFoodName());
+        intent.putExtra("resultRequest",true);
+        startActivityForResult(intent,2);
     }
+
+
 }

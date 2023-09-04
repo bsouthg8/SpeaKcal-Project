@@ -39,8 +39,8 @@
         android:textStyle="bold"
         />
     <ImageView
-        android:layout_width="370sp"
-        android:layout_height="370sp"
+        android:layout_width="300sp"
+        android:layout_height="300sp"
         android:layout_centerHorizontal="true"
         android:id="@+id/imageView"
         android:layout_marginTop="10sp"
@@ -65,7 +65,7 @@
         android:layout_centerHorizontal="true"
         android:text=""
         android:textColor="#C30000"
-        android:textSize="27sp"
+        android:textSize="25sp"
         android:textStyle="bold" />
 
 
