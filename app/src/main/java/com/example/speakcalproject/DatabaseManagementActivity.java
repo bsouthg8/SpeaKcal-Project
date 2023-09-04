@@ -122,6 +122,8 @@ public class DatabaseManagementActivity extends AppCompatActivity {
             edittext.setText(intent.getStringExtra("foodName"));
             if(intent.getBooleanExtra("resultRequest",false)){
                 addToDataBase.setEnabled(false);
+            } else {
+                sendDataBack.setEnabled(false);
             }
         }
 
