@@ -49,12 +49,13 @@ public class PhotoRecognition extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo_recognition);
 
+        getSupportActionBar().setTitle("Photo Recognition");
+
+        setContentView(R.layout.activity_photo_recognition);
         camera = findViewById(R.id.button);
         gallery = findViewById(R.id.button2);
         modify = findViewById(R.id.button3);
-
         result = findViewById(R.id.result);
         imageView = findViewById(R.id.imageView);
 
@@ -89,6 +90,9 @@ public class PhotoRecognition extends AppCompatActivity {
         });
     }
 
+    //requestCode == 1 gallery
+    //requestCode == 2 camera
+    //requestCode == 3 retrieve calories data from database management
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK && requestCode != 2){
@@ -100,7 +104,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 image = Bitmap.createScaledBitmap(image,224,224,false);
                 classifyImage(image);
-            }else {
+            }else if (requestCode == 1){
                 Uri dat = data.getData();
                 Bitmap image = null;
                 try{
@@ -261,6 +265,8 @@ public class PhotoRecognition extends AppCompatActivity {
         }
     }
 
+    //need more work
+    //after getting calories data, need to transfer to user database
     public void handleNameAndWeight(String foodName, float foodWeight)
     {
         foodInfo = new FoodInfo();
