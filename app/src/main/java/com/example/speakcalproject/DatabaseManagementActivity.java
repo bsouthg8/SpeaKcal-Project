@@ -224,7 +224,7 @@ public class DatabaseManagementActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 String amount = caloriesText.getText().toString();
                                 if(TextUtils.isEmpty(amount)) {
-                                    Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                                    displayDataInToast("Invalid input");
                                 }else{
                                     fd.setAmount(amount);
                                     writeFoodDataToDataBase(fd);
