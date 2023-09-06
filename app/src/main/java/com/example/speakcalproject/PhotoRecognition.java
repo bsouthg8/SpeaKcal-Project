@@ -43,24 +43,32 @@ public class PhotoRecognition extends AppCompatActivity {
     public FoodInfo foodInfo;
     private float foodWeight;
     private float foodCalories;
+    private Button backToMainPage;
     private String foodName;
     private FirebaseFirestore ff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getSupportActionBar().setTitle("Photo Recognition");
-
         setContentView(R.layout.activity_photo_recognition);
+
+        backToMainPage = findViewById((R.id.button4));
         camera = findViewById(R.id.button);
         gallery = findViewById(R.id.button2);
         modify = findViewById(R.id.button3);
         result = findViewById(R.id.result);
         imageView = findViewById(R.id.imageView);
-
         FirebaseApp.initializeApp(getApplicationContext());
         ff = FirebaseFirestore.getInstance();
+
+        //waiting for main page
+        backToMainPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override

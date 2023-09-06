@@ -26,38 +26,47 @@
         android:inputType="text"
         android:textSize="30sp"/>
 
-        <Button
-            android:id="@+id/getFromDataBase"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:text="Get From Food Database"
-            tools:layout_editor_absoluteX="155dp"
-            tools:layout_editor_absoluteY="551dp" />
-        <Button
-            android:id="@+id/addToDataBase"
-            android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Add to Food Database"
-            tools:layout_editor_absoluteX="155dp"
-            tools:layout_editor_absoluteY="551dp" />
-        <Button
-            android:id="@+id/showDataBase"
-            android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Show Food Database Contents"
-            tools:layout_editor_absoluteX="155dp"
-            tools:layout_editor_absoluteY="551dp" />
-        <Button
-            android:id="@+id/sendDataBack"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Send Data Back to Photo Recognition" />
+    <Button
+        android:id="@+id/getFromDataBase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:text="Get From Food Database"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="551dp" />
+    <Button
+        android:id="@+id/addToDataBase"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Add to Food Database"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="551dp" />
+    <Button
+        android:id="@+id/showDataBase"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Show Food Database Contents"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="551dp" />
+    <Button
+        android:id="@+id/sendDataBack"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Data Back to Photo Recognition" />
+
+    <Button
+        android:id="@+id/backToMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Back to Main Page"
+        android:textStyle="bold" />
+
     </LinearLayout>

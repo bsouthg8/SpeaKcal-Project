@@ -38,6 +38,7 @@ public class DatabaseManagementActivity extends AppCompatActivity {
     private String foodName;
     private Button sendDataBack;
     private Button showDatabase;
+    private Button backToMainPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,15 @@ public class DatabaseManagementActivity extends AppCompatActivity {
         edittext = (EditText) findViewById(R.id.editText);
         sendDataBack = (Button) findViewById(R.id.sendDataBack);
         showDatabase = (Button) findViewById(R.id.showDataBase);
+        backToMainPage = (Button) findViewById((R.id.backToMain));
+
+        //wait for main page
+        backToMainPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         showDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +202,7 @@ public class DatabaseManagementActivity extends AppCompatActivity {
                     for(QueryDocumentSnapshot document : task.getResult()){
                         fd.setAmount(document.getString("Amount"));
                         displayDataInToast(foodName+" is in the database\n"+"Successfully retrieve data "+fd.getName()+" from database");
-                        textview.setText(fd.getName()+" "+fd.getAmount());
+                        textview.setText("Name: "+fd.getName()+" Amount: "+fd.getAmount());
                     }
 
                     if(task.getResult().isEmpty()){
@@ -244,7 +254,16 @@ public class DatabaseManagementActivity extends AppCompatActivity {
     }
 
     public void displayDataInToast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast_layout,null);
+
+        TextView textViewMessage = layout.findViewById(R.id.textViewMessage);
+        textViewMessage.setText(message);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 
 

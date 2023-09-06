@@ -9,13 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/button3"
-        android:text="Modify Food Info"
+        android:id="@+id/button4"
+        android:text="Back to Mainpage"
         android:textAllCaps="false"
         android:layout_alignParentBottom="true"
         android:textSize="21sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/button3"
+        android:text="Modify Food Info"
+        android:textAllCaps="false"
+        android:layout_above="@id/button4"
+        android:textSize="21sp"
+        android:textStyle="bold" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,8 +34,7 @@
         android:textAllCaps="false"
         android:layout_above="@id/button2"
         android:textSize="21sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,15 +44,13 @@
         android:textAllCaps="false"
         android:layout_above="@+id/button3"
         android:textSize="21sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
     <ImageView
         android:layout_width="300sp"
         android:layout_height="300sp"
         android:layout_centerHorizontal="true"
         android:id="@+id/imageView"
-        android:layout_marginTop="10sp"
-        />
+        android:layout_marginTop="10sp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,8 +60,7 @@
         android:textSize="20sp"
         android:id="@+id/classified"
         android:layout_below="@+id/imageView"
-        android:layout_marginTop="10sp"
-        />
+        android:layout_marginTop="10sp" />
 
     <TextView
         android:id="@+id/result"
