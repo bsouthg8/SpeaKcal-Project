@@ -76,32 +76,29 @@ public class UserDatabaseManagement {
 
     //still working on it. most function works
     public static void addCalorieToUser(Context context, String userName, String foodName, float calories) {
+        Query query = userCollection.whereEqualTo("Username",userName);
 
-        Query query = userCollection.whereEqualTo("Username", userName);
-
-        query.get().addOnSuccessListener(querySnapshot -> {
-            for (QueryDocumentSnapshot document : querySnapshot) {
-                String documentIdToUpdate = document.getId();
-                DocumentReference userDocRef = userCollection.document(documentIdToUpdate);
-
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                int second = calendar.get(Calendar.SECOND);
-                String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
-
-                userCollection.document(documentIdToUpdate).get().addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(!queryDocumentSnapshots.isEmpty()) {
+                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                    if(documentSnapshot.exists()) {
+                        Calendar calendar = Calendar.getInstance();
+                        int year = calendar.get(Calendar.YEAR);
+                        int month = calendar.get(Calendar.MONTH);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int minute = calendar.get(Calendar.MINUTE);
+                        int second = calendar.get(Calendar.SECOND);
+                        String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
                         Map<String, Object> userData = documentSnapshot.getData();
                         if (userData.containsKey("Food") && userData.get("Food") instanceof Map) {
                             Map<String, Object> foodData = (Map<String, Object>) userData.get("Food");
 
                             foodData.put(dateTime, foodName + "," + Float.toString(calories));
 
-                            userDocRef.update("Food", foodData).addOnSuccessListener(aVoid -> {
+                            userCollection.document(documentSnapshot.getId()).update("Food", foodData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Food added successfully", Toast.LENGTH_SHORT).show();
                             }).addOnFailureListener(e -> {
                                 Toast.makeText(context, "Error adding food", Toast.LENGTH_SHORT).show();
@@ -110,28 +107,29 @@ public class UserDatabaseManagement {
                             Map<String, Object> foodData = new HashMap<>();
                             foodData.put(dateTime, foodName + "," + Float.toString(calories));
 
-                            userDocRef.update("Food", foodData).addOnSuccessListener(aVoid -> {
+                            userCollection.document(documentSnapshot.getId()).update("Food", foodData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Food added successfully", Toast.LENGTH_SHORT).show();
                             }).addOnFailureListener(e -> {
                                 Toast.makeText(context, "Error adding food", Toast.LENGTH_SHORT).show();
                             });
                         }
                     } else {
-                        Toast.makeText(context, "User document does not exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Error adding food",Toast.LENGTH_SHORT).show();
                     }
-
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(context, "Error retrieving user document", Toast.LENGTH_SHORT).show();
-                });
+                } else {
+                    Toast.makeText(context,"User: "+userName+" is not in the database",Toast.LENGTH_SHORT).show();
+                }
             }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(context, "User does not exist", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context,"Error getting to database",Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     public static void getUser(String userName, final OnSuccessListener<Map<String, Object>> successListener, final OnFailureListener failureListener){
         Query query = userCollection.whereEqualTo("Username",userName);
-
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

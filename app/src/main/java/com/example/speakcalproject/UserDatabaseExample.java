@@ -79,7 +79,9 @@ public class UserDatabaseExample extends AppCompatActivity {
         addCalorie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(), nameInput.getText().toString(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
+                if(!nameInput.getText().toString().isEmpty() && !foodNameInput.getText().toString().isEmpty() && !calorieInput.getText().toString().isEmpty()) {
+                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), nameInput.getText().toString(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
+                }
             }
         });
     }
