@@ -19,7 +19,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".PhotoRecognition"
+            android:name=".Login"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

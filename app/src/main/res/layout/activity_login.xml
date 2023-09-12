@@ -33,10 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/button"
+        android:id="@+id/login_button"
         android:text="Login"
         android:textAllCaps="false"
-        android:layout_above="@+id/login_button"
         android:textSize="21sp"
         android:textStyle="bold"/>
     <TextView
