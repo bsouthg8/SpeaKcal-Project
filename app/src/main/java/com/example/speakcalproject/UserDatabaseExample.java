@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -67,6 +68,7 @@ public class UserDatabaseExample extends AppCompatActivity {
                     }, new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),"User is not in the database",Toast.LENGTH_SHORT).show();
 
                         }
                     });
@@ -77,11 +79,8 @@ public class UserDatabaseExample extends AppCompatActivity {
         addCalorie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),nameInput.getText().toString(),foodNameInput.getText().toString(),Float.parseFloat(calorieInput.getText().toString()));
+                UserDatabaseManagement.addCalorieToUser(getApplicationContext(), nameInput.getText().toString(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
             }
         });
-
-
-
     }
 }
