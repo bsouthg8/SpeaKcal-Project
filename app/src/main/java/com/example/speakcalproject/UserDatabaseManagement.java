@@ -74,8 +74,9 @@ public class UserDatabaseManagement {
         });
     }
 
-    //need more work
+    //still working on it. most function works
     public static void addCalorieToUser(Context context, String userName, String foodName, float calories) {
+
         Query query = userCollection.whereEqualTo("Username", userName);
 
         query.get().addOnSuccessListener(querySnapshot -> {
@@ -156,7 +157,7 @@ public class UserDatabaseManagement {
         });
     }
 
-    //need more working
+    //still working on it.
     public static void addRewardToUser(Context context, String userName, String reward){
 
     }
