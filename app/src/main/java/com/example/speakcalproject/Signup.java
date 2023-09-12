@@ -1,30 +1,27 @@
 package com.example.speakcalproject;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.google.firebase.auth.AuthResult;
 import android.text.TextUtils;
+
+import com.google.firebase.firestore.auth.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Signup extends AppCompatActivity {
 
     private EditText signupUsernameEditText, signupEmailEditText, signupPasswordEditText, reenterPasswordEditText;
     private Button signupButton;
-    private FirebaseAuth firebaseAuth;
+    private List<User> userList = new ArrayList<>();
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +32,6 @@ public class Signup extends AppCompatActivity {
         signupPasswordEditText = findViewById(R.id.signupPasswordEditText);
         reenterPasswordEditText = findViewById(R.id.reenterPasswordEditText);
         signupButton = findViewById(R.id.signupButton);
-
-        firebaseAuth = FirebaseAuth.getInstance();
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,21 +52,21 @@ public class Signup extends AppCompatActivity {
                     return;
                 }
 
-                firebaseAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                // Create a new user and add them to the user list (in-memory storage)
+                @SuppressLint("RestrictedApi") User newUser = new User(username);
+                userList.add(newUser);
 
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Signup successful
-                                    // You can redirect to the login screen or perform other actions
-                                } else {
-                                    // Signup failed
-                                    Toast.makeText(Signup.this, "Signup failed", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                // Optionally, you can store the user data in a database or send it to a backend server
+                // for actual user registration and data storage.
+
+                // Notify the user that registration was successful
+                Toast.makeText(Signup.this, "Registration successful", Toast.LENGTH_SHORT).show();
+
+                // You can redirect to the login screen or perform other actions
+                // For example, redirect to LoginActivity
+                Intent intent = new Intent(Signup.this, Login.class);
+                startActivity(intent);
             }
         });
     }
 }
-

@@ -6,28 +6,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+    android:padding="48dp"
+    tools:context=".Login">
+
 
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:textSize="21sp"
+        android:textStyle="bold"/>
+
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textSize="21sp"
+        android:textStyle="bold"/>
 
     <Button
-        android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:layout_centerInParent="true"
+        android:id="@+id/login_button"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textSize="21sp"
+        android:textStyle="bold"/>
     <TextView
         android:id="@+id/signup_link"
         android:layout_width="wrap_content"
@@ -36,7 +46,10 @@
         android:textColorLink="@color/colorAccent"
         android:layout_gravity="center"
         android:clickable="true"
-        android:onClick="openSignupActivity" />
+        android:onClick="openSignupActivity"
+        android:textSize="21sp"
+        android:textStyle="bold"/>
+
 
 </LinearLayout>
 
