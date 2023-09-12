@@ -10,34 +10,36 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/emailEditText"
+        android:id="@+id/signupUsernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username" />
+
+    <EditText
+        android:id="@+id/signupEmailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/passwordEditText"
+        android:id="@+id/signupPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/login_button"
+    <EditText
+        android:id="@+id/reenterPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
-    <TextView
-        android:id="@+id/signup_link"
-        android:layout_width="wrap_content"
+        android:hint="Re-enter Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/signupButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Sign up here."
-        android:textColorLink="@color/colorAccent"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:onClick="openSignupActivity" />
+        android:text="Sign Up" />
 
 </LinearLayout>
-
-
