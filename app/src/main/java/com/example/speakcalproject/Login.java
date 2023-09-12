@@ -18,7 +18,7 @@ import java.util.List;
 public class Login extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton;
+    private Button login_button;
 
     // Replace this list with a database or backend service.
     private List<User> userList = new ArrayList<>();
@@ -30,9 +30,9 @@ public class Login extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        loginButton = findViewById(R.id.login_button);
+        login_button = findViewById(R.id.login_button);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString();
