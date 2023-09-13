@@ -57,6 +57,8 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    //When MainActivity finished, change intent to MainActivity
     public void loginUser(String userName, String passWord){
         mAuth.signInWithEmailAndPassword(userName+"@example.com",passWord).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -69,7 +71,7 @@ public class Login extends AppCompatActivity {
                     editor.putString("userName",userName);
                     editor.apply();
 
-                    Intent intent = new Intent(Login.this,PhotoRecognition.class);
+                    Intent intent = new Intent(Login.this,UserDatabaseExample.class);
                     startActivity(intent);
                 }
                 else {

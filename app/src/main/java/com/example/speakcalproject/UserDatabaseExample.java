@@ -16,8 +16,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.Map;
 
 public class UserDatabaseExample extends AppCompatActivity {
-    private Button add,delete,get,addCalorie;
-    private EditText nameInput, passwordInput,foodNameInput,calorieInput;
+    private Button add,delete,get,addCalorie,addReward;
+    private EditText nameInput, passwordInput,foodNameInput,calorieInput,rewardInput;
     private TextView infoOutput;
 
 
@@ -34,6 +34,16 @@ public class UserDatabaseExample extends AppCompatActivity {
         foodNameInput = findViewById(R.id.editFoodName);
         calorieInput = findViewById(R.id.editFoodCalorie);
         infoOutput = findViewById(R.id.userInfoTextView);
+        addReward = findViewById(R.id.addRewardToDatabase);
+        rewardInput = findViewById(R.id.editReward);
+
+        addReward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String reward = rewardInput.getText().toString();
+                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward);
+            }
+        });
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
