@@ -100,8 +100,8 @@ public class PhotoRecognition extends AppCompatActivity {
     }
 
     //requestCode == 1 gallery
-    //requestCode == 2 camera
-    //requestCode == 3 retrieve calories data from database management
+    //requestCode == 3 camera
+    //requestCode == 2 retrieve calories data from database management
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK && requestCode != 2){
