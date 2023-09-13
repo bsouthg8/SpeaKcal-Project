@@ -18,5 +18,12 @@
         android:hint="Weight (grams)"
         android:inputType="numberDecimal"/>
 
+    <EditText
+        android:id="@+id/editTextKcalAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Calories per 100g (Kcal)"
+        android:inputType="numberDecimal" />
+
 
 </LinearLayout>

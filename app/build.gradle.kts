@@ -48,6 +48,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.7.1")
     implementation("com.google.firebase:firebase-firestore:24.7.1")
     implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
+    implementation ("com.google.firebase:firebase-auth:21.0.1") // Use the latest version
+
     implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
     implementation("com.google.android.gms:play-services-tasks:18.0.2")
     implementation("com.google.firebase:firebase-auth:22.1.1")

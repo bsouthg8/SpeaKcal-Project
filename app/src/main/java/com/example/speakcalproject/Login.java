@@ -1,30 +1,14 @@
 package com.example.speakcalproject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.example.speakcalproject.R;
-
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,28 +37,34 @@ public class Login extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(Login.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                // Use Firebase Authentication to sign in the user
                 firebaseAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Login successful
-                                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    // Redirect to the main app screen or perform other actions
-                                } else {
-                                    // Login failed
-                                    Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
+                        .addOnCompleteListener(Login.this, task -> {
+                            if (task.isSuccessful()) {
+                                // Login successful
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                if (user != null) {
+                                    // Redirect to the main activity
+                                    Intent intent = new Intent(Login.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
+                            } else {
+                                // Login failed
+                                Toast.makeText(Login.this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
-
         });
     }
+
     public void openSignupActivity(View view) {
         Intent intent = new Intent(this, Signup.class);
         startActivity(intent);
     }
 }
-
