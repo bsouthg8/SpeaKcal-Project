@@ -66,12 +66,7 @@ public class Login extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user =mAuth.getCurrentUser();
 
-                    SharedPreferences preferences = getSharedPreferences("userName",MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("userName",userName);
-                    editor.apply();
-
-                    Intent intent = new Intent(Login.this,UserDatabaseExample.class);
+                    Intent intent = new Intent(Login.this,PhotoRecognition.class);
                     startActivity(intent);
                 }
                 else {

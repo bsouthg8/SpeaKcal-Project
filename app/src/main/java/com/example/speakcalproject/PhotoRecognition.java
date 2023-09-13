@@ -131,9 +131,7 @@ public class PhotoRecognition extends AppCompatActivity {
                 foodCalories = Float.parseFloat(data.getStringExtra("result"));
                 foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
                 result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
-                SharedPreferences preferences = getSharedPreferences("userName",MODE_PRIVATE);
-                String userName = preferences.getString("userName","");
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),userName,foodInfo.getFoodName(),foodInfo.getCalories());
+                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),foodInfo.getFoodName(),foodInfo.getCalories());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
