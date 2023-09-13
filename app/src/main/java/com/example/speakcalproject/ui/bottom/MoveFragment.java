@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.speakcalproject.R;
+
 public class MoveFragment extends Fragment {
     private Button move;
 
