@@ -3,6 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+<<<<<<< Updated upstream
     <string name="calories_remaining" />
     <string name="breakfast" />
     <string name="add_food" />
@@ -10,4 +11,10 @@
     <string name="calories_remaining" />
     <string name="calories_remaining" />
     <string name="type_food_here" />
+=======
+    <string name="calories_remaining">Calories Remaining</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="add_food">Add Food</string>
+    <string name="type_food_here">Type food here</string>
+>>>>>>> Stashed changes
 </resources>
