@@ -3,4 +3,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="calories_remaining" />
+    <string name="breakfast" />
+    <string name="add_food" />
+    <string name="type_food_here" />
 </resources>
