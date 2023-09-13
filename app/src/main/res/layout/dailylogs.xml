@@ -15,162 +15,72 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_menu" /><![CDATA[
+        app:menu="@menu/bottom_nav_menu" />
 
-     />
 
-    ]]><!--        app:layout_constraintBottom_toTopOf="@+id/button"-->
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_activity_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/nav_view"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="1.0"
         app:navGraph="@navigation/mobile_navigation" />
 
 
-    // make this into a text box
-
-    // turn this into a box to insert an int to store calories
-
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/Calories_Remaining"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date "
-        android:textSize="25sp"
-        tools:layout_editor_absoluteX="288dp"
-        tools:layout_editor_absoluteY="54dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calories Remaining "
+        android:text="@string/calories_remaining"
         android:textSize="60sp"
-        tools:layout_editor_absoluteX="34dp"
-        tools:layout_editor_absoluteY="324dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/Breakfast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Breakfast "
+        android:text="@string/breakfast"
         android:textSize="45sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="576dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food hear "
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="662dp" />
-
-    // make this into a text box
-
-    // turn this into a box to insert an int to store calories
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calories"
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="307dp"
-        tools:layout_editor_absoluteY="670dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lunch "
-        android:textSize="45sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="773dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food hear "
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="872dp" />
-
-    // make this into a text box
-
-    // turn this into a box to insert an int to store calories
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calories"
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="307dp"
-        tools:layout_editor_absoluteY="872dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dinner "
-        android:textSize="45sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="987dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food hear "
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="1081dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calories"
-        android:textSize="36sp"
-        tools:layout_editor_absoluteX="307dp"
-        tools:layout_editor_absoluteY="1081dp" />
-
-    <!--        app:layout_constraintBottom_toTopOf="@+id/button"-->
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:ignore="MissingConstraints" />
+        tools:layout_editor_absoluteX="-6dp"
+        tools:layout_editor_absoluteY="161dp"
+        tools:ignore="MissingConstraints" />
 
 
-    <!--    <Button-->
-<!--        android:id="@+id/button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="153dp"-->
-<!--        android:layout_marginEnd="170dp"-->
-<!--        android:onClick="speak"-->
-<!--        android:text="Speak"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/textView"-->
-<!--        tools:ignore="MissingConstraints" />-->
+    <ListView
+        android:id="@+id/Output_Breakfast"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="331dp"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/Input_Food"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/add_food"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="-5dp"
+        tools:layout_editor_absoluteY="281dp"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/type_food_here"
+        android:id="@+id/Input_Breakfast"
+        tools:layout_editor_absoluteX="-5dp"
+        tools:layout_editor_absoluteY="236dp"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
