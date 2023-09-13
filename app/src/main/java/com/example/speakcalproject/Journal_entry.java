@@ -9,16 +9,11 @@ import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import com.example.speakcalproject.databinding.ActivityMainBinding;
+//import com.example.speakcalproject.databinding.ActivityMainBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -27,7 +22,7 @@ import com.google.firebase.firestore.core.View;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity {
+public class Journal_entry extends AppCompatActivity {
 
             private static final String TAG = "MainActivity";
             private FirebaseFirestore firestore;
@@ -48,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 // Initialize ListView and ArrayAdapter
                 breakfastOutput = findViewById(R.id.Output_Breakfast);
                 list = new ArrayList<>();
-                adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+                adapter = new ArrayAdapter<>(this, android.R.layout.dailylogs, list);
                 breakfastOutput.setAdapter(adapter);
 
                 enterBreakfast = findViewById(R.id.Input_Breakfast);
@@ -72,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    list.clear(); // Clear the current list
+//                                    list.clear(); // Clear the current list
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String foodName = document.getString("foodName");
-                                        list.add(foodName); // Add the retrieved food to the list
+                                        list.add(document.getString("foodName")); // Add the retrieved food to the list
                                     }
                                     adapter.notifyDataSetChanged(); // Notify the adapter about the data change
                                 } else {
@@ -86,4 +81,3 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-}

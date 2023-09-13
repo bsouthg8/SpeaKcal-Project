@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "334279266745",
+    "firebase_url": "https://speakcal-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "speakcal-project",
+    "storage_bucket": "speakcal-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334279266745:android:55518582376c956a8d2668",
+        "android_client_info": {
+          "package_name": "com.example.speakcalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334279266745-rp9m6locnoacr5d9ku8usn99mupmacu5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.speakcalproject",
+            "certificate_hash": "d7c8d92432a594772f03fba04415524547b1330f"
+          }
+        },
+        {
+          "client_id": "334279266745-mbc27ha07o9le7i561nb88fscb04utvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqe3RbYo5ihCacT3uLtnlaLzccgDWS7Nk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334279266745-mbc27ha07o9le7i561nb88fscb04utvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

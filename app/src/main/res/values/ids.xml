@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="Calories_Remaining" type="id" />
+    <item name="Calories_Remaining" type="id" />
+    <item name="Calories_Remaining" type="id" />
+    <item name="Breakfast" type="id" />
+    <item name="Input_Breakfast" type="id" />
+    <item name="Calories_Remaining" type="id" />
+    <item name="Input_Food" type="id" />
+</resources>
