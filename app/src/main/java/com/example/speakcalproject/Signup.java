@@ -14,10 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,52 +56,47 @@ public class Signup extends AppCompatActivity {
                     return;
                 }
 
-                // Create a new user with email and password using Firebase Authentication
-                firebaseAuth.createUserWithEmailAndPassword(username + "@example.com", password)
-                        .addOnCompleteListener(Signup.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Registration successful
-                                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    if (user != null) {
-                                        // Save user data to Firestore
-                                        saveUserDataToFirestore(username, user.getUid());
-
-                                        // Redirect to the main activity
-                                        Intent intent = new Intent(Signup.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                } else {
-                                    // Registration failed
-                                    Toast.makeText(Signup.this, "Error:" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                // Use the username as an email (add a domain like example.com)
+                String email = username + "@example.com";
+                registerUser(email, password, username);
             }
         });
     }
 
-    private void saveUserDataToFirestore(String username, String userId) {
-        // Create a new user document in Firestore
+    private void registerUser(String email, String password, String username) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            saveUserDataToFirestore(username);
+                        } else {
+                            Toast.makeText(Signup.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    private void saveUserDataToFirestore(String username) {
+        String userId = firebaseAuth.getCurrentUser().getUid();
+
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("username", username);
 
-        DocumentReference userRef = firestore.collection("users").document(userId);
-        userRef.set(userMap, SetOptions.merge())
+        firestore.collection("users").document(userId).set(userMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            // User data saved to Firestore
-                            // You can add any additional actions or logic here
-                            Toast.makeText(Signup.this, "User data saved successfully.", Toast.LENGTH_SHORT).show();
+                            // Redirect to the login activity
+                            Intent intent = new Intent(Signup.this, Login.class);
+                            startActivity(intent);
+                            finish();
                         } else {
-                            // Error saving user data
-                            Toast.makeText(Signup.this, "Error saving user data.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Signup.this, "Error saving user data: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
 }
+
