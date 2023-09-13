@@ -25,7 +25,6 @@ public class UserDatabaseManagement {
     //add user database "User"
     //User structure:
     //Username
-    //Password
     //Food -> Map<Date+Time, FoodName+Calories>>
     //Reward
     public static void addUser(Context context, String userName) {
