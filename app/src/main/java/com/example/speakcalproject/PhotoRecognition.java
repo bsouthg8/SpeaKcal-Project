@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -130,6 +131,9 @@ public class PhotoRecognition extends AppCompatActivity {
                 foodCalories = Float.parseFloat(data.getStringExtra("result"));
                 foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
                 result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
+                SharedPreferences preferences = getSharedPreferences("userName",MODE_PRIVATE);
+                String userName = preferences.getString("userName","");
+                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),userName,foodInfo.getFoodName(),foodInfo.getCalories());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

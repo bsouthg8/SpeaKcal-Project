@@ -54,6 +54,13 @@
             <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
         </activity>
 
+        <activity
+            android:name=".Signup"
+            android:exported="true">
+            <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
+        </activity>
+        
+
     </application>
 
 </manifest>

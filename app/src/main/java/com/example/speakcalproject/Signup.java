@@ -11,16 +11,23 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.text.TextUtils;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Signup extends AppCompatActivity {
 
     private EditText signupUsernameEditText, signupEmailEditText, signupPasswordEditText, reenterPasswordEditText;
     private Button signupButton;
-    private List<User> userList = new ArrayList<>();
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +35,21 @@ public class Signup extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         signupUsernameEditText = findViewById(R.id.signupUsernameEditText);
-        signupEmailEditText = findViewById(R.id.signupEmailEditText);
         signupPasswordEditText = findViewById(R.id.signupPasswordEditText);
         reenterPasswordEditText = findViewById(R.id.reenterPasswordEditText);
         signupButton = findViewById(R.id.signupButton);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String username = signupUsernameEditText.getText().toString();
-                String email = signupEmailEditText.getText().toString();
                 String password = signupPasswordEditText.getText().toString();
                 String reenterPassword = reenterPasswordEditText.getText().toString();
 
                 // Perform validation for username, email, and passwords
-                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(reenterPassword)) {
+                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(reenterPassword)) {
                     Toast.makeText(Signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -52,20 +59,29 @@ public class Signup extends AppCompatActivity {
                     return;
                 }
 
-                // Create a new user and add them to the user list (in-memory storage)
-                @SuppressLint("RestrictedApi") User newUser = new User(username);
-                userList.add(newUser);
+                registerUser(username,password);
 
-                // Optionally, you can store the user data in a database or send it to a backend server
-                // for actual user registration and data storage.
+            }
+        });
+    }
 
-                // Notify the user that registration was successful
-                Toast.makeText(Signup.this, "Registration successful", Toast.LENGTH_SHORT).show();
+    public void registerUser(String userName, String passWord){
+        mAuth.createUserWithEmailAndPassword(userName+"@example.com",passWord).addOnCompleteListener(this,task -> {
+            if(task.isSuccessful()) {
+                String userID = mAuth.getCurrentUser().getUid();
+                HashMap<String, Object> userData = new HashMap<>();
+                userData.put("username",userName);
 
-                // You can redirect to the login screen or perform other actions
-                // For example, redirect to LoginActivity
-                Intent intent = new Intent(Signup.this, Login.class);
-                startActivity(intent);
+                db.collection("users").document(userID).set(userData).addOnSuccessListener(aVoid -> {
+                    Toast.makeText(Signup.this,"Registered successfully",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Signup.this,Login.class);
+                    startActivity(intent);
+                    finish();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(Signup.this,"Database error",Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                Toast.makeText(Signup.this,"Registration failed",Toast.LENGTH_SHORT).show();
             }
         });
     }
