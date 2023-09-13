@@ -1,5 +1,6 @@
 package com.example.speakcalproject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -10,6 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
@@ -22,11 +32,13 @@ public class Login extends AppCompatActivity {
 
     // Replace this list with a database or backend service.
     private List<User> userList = new ArrayList<>();
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -38,19 +50,41 @@ public class Login extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                // Replace this with actual user authentication logic.
-                User user = authenticateUser(email, password);
+                mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            FirebaseUser user = mAuth.getCurrentUser();
 
-                if (user != null) {
-                    // Login successful
-                    // You can store user data in SharedPreferences or perform other actions.
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    // Login failed
-                    Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
-                }
+                            if(user != null) {
+                                String uid = user.getUid();
+
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                DocumentReference userRef = db.collection("User").document(uid);
+
+                                userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()) {
+                                            String storedUsername = documentSnapshot.getString("Username");
+                                            String storedPasswordHash = documentSnapshot.getString("Password");
+                                            if(email.equals(storedUsername) && password.equals(storedPasswordHash)) {
+                                                Intent intent = new Intent(Login.this,PhotoRecognition.class);
+                                            } else {
+                                                Toast.makeText(Login.this,"Authentication failed.", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        } else {
+
+                                        }
+                                    }
+                                });
+                            }
+                        } else {
+                            Toast.makeText(Login.this,"Authentication failed.",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
     }

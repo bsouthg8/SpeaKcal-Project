@@ -39,7 +39,7 @@ public class UserDatabaseExample extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!nameInput.getText().toString().isEmpty() && !passwordInput.getText().toString().isEmpty()) {
-                UserDatabaseManagement.addUser(UserDatabaseExample.this,nameInput.getText().toString(),passwordInput.getText().toString());
+                UserDatabaseManagement.addUser(UserDatabaseExample.this,nameInput.getText().toString());
                 }
             }
         });
@@ -60,15 +60,14 @@ public class UserDatabaseExample extends AppCompatActivity {
                     UserDatabaseManagement.getUser(nameInput.getText().toString(), new OnSuccessListener<Map<String, Object>>() {
                         @Override
                         public void onSuccess(Map<String, Object> userData) {
-                            String userName = (String) userData.get("Username");
-                            String passWord = (String) userData.get("Password");
+                            String userName = (String) userData.get("username");
                             Map<String, Object> food = (Map<String, Object>) userData.get("Food");
-                            infoOutput.setText(userName+" "+passWord+" \n"+food);
+                            infoOutput.setText(userName+"\n"+food);
                         }
                     }, new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(),"User is not in the database",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),"User "+nameInput.getText().toString()+" is not in the database",Toast.LENGTH_SHORT).show();
 
                         }
                     });

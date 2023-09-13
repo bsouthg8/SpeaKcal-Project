@@ -1,23 +1,25 @@
 package com.example.speakcalproject;
+
 import android.content.Context;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final CollectionReference userCollection = db.collection("User");
+    private static final CollectionReference userCollection = db.collection("users");
 
 
     //add user database "User"
@@ -26,11 +28,9 @@ public class UserDatabaseManagement {
     //Password
     //Food -> Map<Date+Time, FoodName+Calories>>
     //Reward
-    public static void addUser(Context context, String userName, String passWord) {
+    public static void addUser(Context context, String userName) {
         Map<String, Object> user = new HashMap<>();
-        user.put("Username",userName);
-        user.put("Password",passWord);
-
+        user.put("username",userName);
         userCollection.add(user).addOnSuccessListener(documentReference -> {
             Toast.makeText(context,"User added successfully", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e -> {
@@ -40,7 +40,7 @@ public class UserDatabaseManagement {
 
     //delete user according to user name
     public static void deleteUser(Context context, String userName) {
-        Query query = userCollection.whereEqualTo("Username",userName);
+        Query query = userCollection.whereEqualTo("username",userName);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -76,7 +76,7 @@ public class UserDatabaseManagement {
 
     //still working on it. most function works
     public static void addCalorieToUser(Context context, String userName, String foodName, float calories) {
-        Query query = userCollection.whereEqualTo("Username",userName);
+        Query query = userCollection.whereEqualTo("username",userName);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -129,7 +129,7 @@ public class UserDatabaseManagement {
     }
 
     public static void getUser(String userName, final OnSuccessListener<Map<String, Object>> successListener, final OnFailureListener failureListener){
-        Query query = userCollection.whereEqualTo("Username",userName);
+        Query query = userCollection.whereEqualTo("username",userName);
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
