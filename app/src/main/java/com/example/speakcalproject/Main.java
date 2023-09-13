@@ -1,13 +1,17 @@
-package com.example.speakcalproject.ui.bottom;
+package com.example.speakcalproject;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import com.example.speakcalproject.HomeFragment;
+import com.example.speakcalproject.CameraFragment;
+import com.example.speakcalproject.UserFragment;
+import com.example.speakcalproject.MoveFragment;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.speakcalproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Main extends AppCompatActivity {

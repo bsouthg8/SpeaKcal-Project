@@ -1,4 +1,4 @@
-package com.example.speakcalproject.ui.bottom;
+package com.example.speakcalproject;
 
 import android.os.Bundle;
 
