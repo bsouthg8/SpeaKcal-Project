@@ -13,9 +13,8 @@
         android:layout_height="wrap_content"
         android:text="calories remaining"
         android:textSize="60sp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/Breakfast"
@@ -23,40 +22,48 @@
         android:layout_height="wrap_content"
         android:text="breakfast"
         android:textSize="45sp"
-        tools:layout_editor_absoluteX="-6dp"
-        tools:layout_editor_absoluteY="161dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Calories_Remaining" />
 
 
     <ListView
         android:id="@+id/Output_Breakfast"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="347dp"
         android:padding="10dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="331dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/GetFromDatabase" />
 
     <Button
-        android:id="@+id/Input_Food"
-        android:layout_width="match_parent"
+
+        android:id="@+id/GetFromDatabase"
+        android:layout_width="80dp"
         android:layout_height="50dp"
-        android:text="add_food"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="-5dp"
-        tools:layout_editor_absoluteY="281dp"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="8dp"
+        android:text="add"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/Output_Breakfast"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Input_Breakfast"
+        app:layout_constraintTop_toBottomOf="@+id/Calories_Remaining" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="type_food_here"
         android:id="@+id/Input_Breakfast"
-        tools:layout_editor_absoluteX="-5dp"
-        tools:layout_editor_absoluteY="236dp"
-        tools:ignore="MissingConstraints" />
-
-
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:hint="type food here"
+        app:layout_constraintBottom_toTopOf="@+id/Output_Breakfast"
+        app:layout_constraintEnd_toStartOf="@+id/GetFromDatabase"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Breakfast" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
