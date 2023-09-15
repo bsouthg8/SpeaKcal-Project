@@ -63,7 +63,7 @@ public class Login extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user =mAuth.getCurrentUser();
 
-                    Intent intent = new Intent(Login.this,DatabaseManagementActivity.class);
+                    Intent intent = new Intent(Login.this,PhotoRecognition.class);
                     startActivity(intent);
                 }
                 else {
