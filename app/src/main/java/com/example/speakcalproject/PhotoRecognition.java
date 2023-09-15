@@ -1,15 +1,11 @@
 package com.example.speakcalproject;
 
 import static android.provider.MediaStore.*;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.ThumbnailUtils;
 import android.net.Uri;

@@ -2,19 +2,11 @@ package com.example.speakcalproject;
 
 import android.content.Context;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,52 +22,6 @@ public class UserDatabaseManagement {
     //Food -> Map<Date+Time, FoodName+Calories>>
     //reward
 
-    //delete when finish testing
-    public static void addUser(Context context, String userName) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("username",userName);
-        userCollection.add(user).addOnSuccessListener(documentReference -> {
-            Toast.makeText(context,"User added successfully", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(context,"Error adding user", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    //delete when finish testing
-    public static void deleteUser(Context context, String userName) {
-        Query query = userCollection.whereEqualTo("username",userName);
-
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if(!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                    if(documentSnapshot.exists()) {
-                        userCollection.document(documentSnapshot.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(context,"User: "+userName+" deleted",Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(context,"User: "+userName+" failed to be deleted",Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        Toast.makeText(context,"User: "+userName+" failed to be deleted",Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context,"User: "+userName+" is not in the database",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
     //done
     public static void addCalorieToUser(Context context, String foodName, float calories) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -126,32 +72,38 @@ public class UserDatabaseManagement {
         }
 
     }
-    //need more work
-    public static void getUser(String userName, final OnSuccessListener<Map<String, Object>> successListener, final OnFailureListener failureListener){
-        Query query = userCollection.whereEqualTo("username",userName);
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> userData = new HashMap<>(documentSnapshot.getData());
-                        successListener.onSuccess(userData);
-                    } else {
-                        failureListener.onFailure((new Exception("User document does not exist")));
-                    }
+    //When need to retrieve user data
+    //user method like below:
+    //UserDatabaseManagement.getUserData(getApplicationContext, new UserDatabaseManagement.OnUserDataCallback() {
+    // @Override
+    // public void onUserDataReceived(Map<String, Object> userData) {
+    //String userName = (String) userData.get("username");
+    //}
+    //});
+    //done
+    public static void getUserData(Context context, OnUserDataCallback callback){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
 
+        userCollection.document(userId).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                DocumentSnapshot document = task.getResult();
+                if(document.exists()) {
+                    Map<String, Object> userData = (Map<String, Object>) document.getData();
+                    callback.onUserDataReceived(userData);
+                    Toast.makeText(context,"User data retrieved successfully",Toast.LENGTH_SHORT).show();
                 } else {
-                    failureListener.onFailure((new Exception("No user found with the specified username")));
+                    Toast.makeText(context,"User data does not exist",Toast.LENGTH_SHORT).show();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                failureListener.onFailure(e);
+            } else {
+                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    //done
+    public interface  OnUserDataCallback {
+        void onUserDataReceived(Map<String, Object> userData);
     }
     //done
     public static void addRewardToUser(Context context, String reward){
