@@ -169,6 +169,7 @@ public class DatabaseManagementActivity extends AppCompatActivity {
             if(intent.getBooleanExtra("resultRequest",false)){
                 addToDataBase.setEnabled(false);
                 sendDataBack.setEnabled(false);
+                edittext.setEnabled(false);
                 textview.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
