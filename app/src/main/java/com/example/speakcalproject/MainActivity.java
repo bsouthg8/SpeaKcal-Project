@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         groceries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, GroceriesActivity.class));
+                startActivity(new Intent(MainActivity.this, PhotoRecognition.class));
             }
         });
 
