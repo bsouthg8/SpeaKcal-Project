@@ -55,6 +55,12 @@
         </activity>
 
         <activity
+            android:name=".UserDatabaseExample"
+            android:exported="true">
+            <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
