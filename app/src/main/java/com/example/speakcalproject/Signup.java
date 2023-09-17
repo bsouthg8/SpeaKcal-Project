@@ -83,7 +83,7 @@ public class Signup extends AppCompatActivity {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("username", username);
 
-        firestore.collection("user").document(userId).set(userMap)
+        firestore.collection("users").document(userId).set(userMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
