@@ -47,6 +47,14 @@
         tools:layout_editor_absoluteX="94dp"
         tools:layout_editor_absoluteY="549dp" />
 
+    <Button
+        android:id="@+id/addRewardToDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add reward to Database"
+        tools:layout_editor_absoluteX="94dp"
+        tools:layout_editor_absoluteY="549dp" />
+
     <EditText
         android:id="@+id/editUserName"
         android:layout_width="wrap_content"
@@ -84,6 +92,16 @@
         android:ems="10"
         android:inputType="numberDecimal"
         android:hint="Calories (kcal)"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="73dp"
+        />
+    <EditText
+        android:id="@+id/editReward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="Reward"
         tools:layout_editor_absoluteX="93dp"
         tools:layout_editor_absoluteY="73dp"
         />
