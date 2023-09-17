@@ -12,10 +12,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -171,6 +169,7 @@ public class DatabaseManagementActivity extends AppCompatActivity {
             if(intent.getBooleanExtra("resultRequest",false)){
                 addToDataBase.setEnabled(false);
                 sendDataBack.setEnabled(false);
+                edittext.setEnabled(false);
                 textview.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
