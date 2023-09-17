@@ -1,74 +1,73 @@
 package com.example.speakcalproject;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import com.example.speakcalproject.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ActivityMainBinding binding;
-
-    FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
-
+        setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
+        ImageView logo = (ImageView) findViewById(R.id.imageView);
 
-
-        // The following code is test code to see if adding data to the database is working properly
-        /* firestore = FirebaseFirestore.getInstance();
-
-        Map<String, Object> users = new HashMap<>();
-        users.put("firstName", "Bradley");
-        users.put("lastName", "Southgate");
-        users.put("description", "Hello");
-
-        firestore.collection("users").add(users).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        logo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+
+                //Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
+                //startActivity(dbmanager);
+
+
+                startActivity(new Intent(MainActivity.this, NutriDataActivity.class));
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        });
+
+
+        ImageButton meals = (ImageButton) findViewById(R.id.meals);
+        meals.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MealsActivity.class));
             }
-        }); // database test ends here */
+        });
+
+        ImageButton recipes = (ImageButton) findViewById(R.id.recipes);
+        recipes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, RecipeActivity.class));
+            }
+        });
+
+        ImageButton groceries = (ImageButton) findViewById(R.id.groceries);
+        groceries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, GroceriesActivity.class));
+            }
+        });
+
+        ImageButton settings = (ImageButton) findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Profile.class));
+            }
+        });
 
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }
