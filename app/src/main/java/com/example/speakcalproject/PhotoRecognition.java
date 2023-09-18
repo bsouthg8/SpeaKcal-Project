@@ -21,8 +21,14 @@ import android.widget.TextView;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.widget.Toast;
+import com.example.speakcalproject.R;
 
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
+import com.example.speakcalproject.ui.dashboard.DashboardFragment;
+import com.example.speakcalproject.ui.home.HomeFragment;
+import com.example.speakcalproject.ui.home.HomeViewModel;
+import com.example.speakcalproject.ui.notifications.NotificationsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -58,6 +64,21 @@ public class PhotoRecognition extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         FirebaseApp.initializeApp(getApplicationContext());
         ff = FirebaseFirestore.getInstance();
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
+                startActivity(new Intent(this, HomeFragment.class));
+            } else if (itemId == R.id.navigation_journal) {
+                startActivity(new Intent(this, DashboardFragment.class));
+            } else if (itemId == R.id.navigation_photo) {
+                return false;
+            } else if (itemId == R.id.navigation_profile) {
+                startActivity(new Intent(this, NotificationsFragment.class));
+            }
+            return false;
+        });
 
         //waiting for main page
         backToMainPage.setOnClickListener(new View.OnClickListener() {

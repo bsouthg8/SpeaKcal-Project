@@ -34,6 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".Signup"
             android:exported="true"
@@ -43,7 +44,8 @@
         <!-- PhotoRecognition activity -->
         <activity
             android:name=".PhotoRecognition"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
         </activity>
 

@@ -7,13 +7,18 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_journal"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:title="@string/title_journal" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_photo"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_photorecognition" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/title_profile" />
 
 </menu>
