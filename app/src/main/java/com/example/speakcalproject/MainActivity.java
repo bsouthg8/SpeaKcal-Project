@@ -3,71 +3,72 @@ package com.example.speakcalproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
+import com.example.speakcalproject.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView textView;
+    private ImageView imageView;
+    private String userName;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
-        ImageView logo = (ImageView) findViewById(R.id.imageView);
 
-        logo.setOnClickListener(new View.OnClickListener() {
+        imageView = findViewById(R.id.imageView);
+        textView = findViewById(R.id.textView);
+
+        UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
-            public void onClick(View v) {
-
-                //Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
-                //startActivity(dbmanager);
-
-
-                startActivity(new Intent(MainActivity.this, UserDatabaseExample.class));
+            public void onUserDataReceived(Map<String, Object> userData) {
+                userName = (String) userData.get("username");
+                textView.setText("Welcome back\n"+userName);
             }
         });
 
 
-        ImageButton meals = (ImageButton) findViewById(R.id.meals);
-        meals.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MealsActivity.class));
-            }
-        });
+        // The following code is test code to see if adding data to the database is working properly
+        /* firestore = FirebaseFirestore.getInstance();
 
-        ImageButton recipes = (ImageButton) findViewById(R.id.recipes);
-        recipes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RecipeActivity.class));
-            }
-        });
+        Map<String, Object> users = new HashMap<>();
+        users.put("firstName", "Bradley");
+        users.put("lastName", "Southgate");
+        users.put("description", "Hello");
 
-        ImageButton groceries = (ImageButton) findViewById(R.id.groceries);
-        groceries.setOnClickListener(new View.OnClickListener() {
+        firestore.collection("users").add(users).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PhotoRecognition.class));
+            public void onSuccess(DocumentReference documentReference) {
+                Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
             }
-        });
-
-        ImageButton settings = (ImageButton) findViewById(R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Profile.class));
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
             }
-        });
+        }); // database test ends here */
 
     }
 
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-    }
+
+
 }
