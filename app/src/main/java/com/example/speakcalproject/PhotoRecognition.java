@@ -56,7 +56,7 @@ public class PhotoRecognition extends AppCompatActivity {
         getSupportActionBar().setTitle("Photo Recognition");
         setContentView(R.layout.activity_photo_recognition);
 
-        backToMainPage = findViewById((R.id.button4));
+        // backToMainPage = findViewById((R.id.button4));
         camera = findViewById(R.id.button);
         gallery = findViewById(R.id.button2);
         modify = findViewById(R.id.button3);
@@ -67,6 +67,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(item -> {
+            Intent intent = null;
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_home) {
                 startActivity(new Intent(this, HomeFragment.class));
@@ -77,16 +78,23 @@ public class PhotoRecognition extends AppCompatActivity {
             } else if (itemId == R.id.navigation_profile) {
                 startActivity(new Intent(this, NotificationsFragment.class));
             }
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                return true; // indicates the event is handled.
+            }
+
             return false;
         });
 
         //waiting for main page
-        backToMainPage.setOnClickListener(new View.OnClickListener() {
+/*        backToMainPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
-        });
+        }); */
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
