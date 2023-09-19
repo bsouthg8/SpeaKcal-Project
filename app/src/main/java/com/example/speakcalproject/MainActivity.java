@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private String userName;
     private Map<String, Object> userInfo;
     private PieChart pieChart;
+    private double limitedCalories;
 
 
 
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         pieChart = findViewById(R.id.pieChart);
 
+        //waiting for further modification
+        limitedCalories = 2500;
+
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
@@ -74,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Double totalCalories = getCurrentDaysCalories();
                     List<PieEntry> entries = new ArrayList<>();
-                    entries.add(new PieEntry(new Float(totalCalories)/2500f,"Taken"));
+                    entries.add(new PieEntry(new Float(totalCalories),"Taken"));
                     //just testing now
-                    entries.add(new PieEntry(1-new Float(totalCalories)/2500f,"Left"));
+                    entries.add(new PieEntry(new Float(limitedCalories-totalCalories),"Left"));
 
                     PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
                     dataSet.setValueTextSize(20f);
