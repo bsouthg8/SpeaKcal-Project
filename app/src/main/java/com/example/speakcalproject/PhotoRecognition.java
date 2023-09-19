@@ -50,6 +50,8 @@ public class PhotoRecognition extends AppCompatActivity {
     private String foodName;
     private FirebaseFirestore ff;
 
+    private int mCurrentSelectedItemId = R.id.navigation_photo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,27 +68,39 @@ public class PhotoRecognition extends AppCompatActivity {
         ff = FirebaseFirestore.getInstance();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_photo);
         navView.setOnNavigationItemSelectedListener(item -> {
-            Intent intent = null;
             int itemId = item.getItemId();
-            if (itemId == R.id.navigation_home) {
-                startActivity(new Intent(this, HomeFragment.class));
-            } else if (itemId == R.id.navigation_journal) {
-                startActivity(new Intent(this, DashboardFragment.class));
-            } else if (itemId == R.id.navigation_photo) {
+
+            // Check if the item is already selected
+            if (itemId == mCurrentSelectedItemId) {
                 return false;
-            } else if (itemId == R.id.navigation_profile) {
-                startActivity(new Intent(this, NotificationsFragment.class));
             }
 
-            if (intent != null) {
+            if (itemId == R.id.navigation_photo) {
+                return false;  // Stay on the same screen
+            } else if (itemId == R.id.navigation_home) {
+                Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                return true; // indicates the event is handled.
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.navigation_journal) {
+                Intent intent = new Intent(this, TestJournal.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.navigation_profile) {
+                Intent intent = new Intent(this, TestProfile.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
             }
-
             return false;
         });
+
 
         //waiting for main page
 /*        backToMainPage.setOnClickListener(new View.OnClickListener() {

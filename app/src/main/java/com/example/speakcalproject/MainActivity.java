@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private Button goToPhotoRecognition;
 
+    private int mCurrentSelectedItemId = R.id.navigation_home; // default item
+
     FirebaseFirestore firestore;
 
     @Override
@@ -36,25 +38,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        // Set up navigation for bottom navigation view
+        navView.setSelectedItemId(mCurrentSelectedItemId);
         navView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
+
+            // Check if the item is already selected
+            if (itemId == mCurrentSelectedItemId) {
+                return false;
+            }
+
             if (itemId == R.id.navigation_home) {
-                // HomeFragment should be an Activity if you're using startActivity
-                startActivity(new Intent(this, MainActivity.class));
-                return true;  // Return true to indicate you've handled this item click
+                return false;  // Stay on the same screen
             } else if (itemId == R.id.navigation_journal) {
-                startActivity(new Intent(this, DashboardFragment.class));
+                Intent intent = new Intent(this, TestJournal.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             } else if (itemId == R.id.navigation_photo) {
-                startActivity(new Intent(this, PhotoRecognition.class));
+                Intent intent = new Intent(this, PhotoRecognition.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             } else if (itemId == R.id.navigation_profile) {
-                startActivity(new Intent(this, NotificationsFragment.class));
+                Intent intent = new Intent(this, TestProfile.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             }
-            return false; // Return false to indicate you haven't handled this item click
+            return false;
         });
 
         FirebaseApp.initializeApp(this);
