@@ -39,7 +39,7 @@ public class Journal_entry extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.dailylog);
 
         DatabaseReference Ref = FirebaseDatabase.getInstance().getReference().child("Food");
 
