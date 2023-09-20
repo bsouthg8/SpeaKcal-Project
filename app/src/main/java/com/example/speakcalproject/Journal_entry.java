@@ -1,12 +1,11 @@
 package com.example.speakcalproject;//package com.example.speakcalproject;
+
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -17,22 +16,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 
 public class Journal_entry extends AppCompatActivity {
 
     Button button;
-    //    TextView textView;
     ListView listView;
     EditText editText;
 
@@ -41,13 +35,7 @@ public class Journal_entry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dailylog);
 
-        DatabaseReference Ref = FirebaseDatabase.getInstance().getReference().child("Food");
-
-        Ref.child("Name").setValue("milk");
-        Ref.child("Amount").setValue(23);
-
         button = findViewById(R.id.button_ID);
-//        textView = findViewById(R.id.textView_ID);
         listView = findViewById(R.id.list_ID);
         editText = findViewById(R.id.editText_ID);
 
@@ -55,7 +43,7 @@ public class Journal_entry extends AppCompatActivity {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                LinkedList<Pair<String, Long>> foodList = new LinkedList<>();
+                ArrayList<Pair<String, Long>> foodList = new ArrayList<>();
                 String userInput = editText.getText().toString();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String name = snapshot.child("Name").getValue(String.class);
@@ -85,14 +73,20 @@ public class Journal_entry extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Log a message
+                // Log or show the error message
+                Log.e("DatabaseError", databaseError.getMessage());
             }
         };
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                foodRef.addListenerForSingleValueEvent(valueEventListener);
+                String userInput = editText.getText().toString();
+                if (!userInput.isEmpty()) {
+                    foodRef.addListenerForSingleValueEvent(valueEventListener);
+                } else {
+                    // Handle empty input
+                }
             }
         });
     }
