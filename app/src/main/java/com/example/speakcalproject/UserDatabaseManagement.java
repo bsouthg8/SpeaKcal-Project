@@ -7,7 +7,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +35,7 @@ public class UserDatabaseManagement {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
@@ -114,7 +118,7 @@ public class UserDatabaseManagement {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
@@ -156,4 +160,32 @@ public class UserDatabaseManagement {
 
     }
 
+    public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
+        double totalCalories = 0.0;
+
+        for(Map.Entry<String, Object> entry : data.entrySet()){
+            String dateTimeStr = entry.getKey();
+            String foodInfo = entry.getValue().toString();
+            dateTimeStr = dateTimeStr.split(" ")[0];
+            dateTimeStr.replace("\"","");
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = dateFormat.parse(dateTimeStr);
+            String currentDate = dateFormat.format(date);
+
+            if(currentDate.equals(targetDate)) {
+                String[] parts = foodInfo.split(", ");
+                if(parts.length == 2) {
+                    try {
+                        double calories = Double.parseDouble(parts[1]);
+                        totalCalories += calories;
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        return totalCalories;
+    }
 }
