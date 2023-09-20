@@ -7,63 +7,44 @@
     tools:context=".Journal_entry">
 
 
-    <TextView
-        android:id="@+id/Calories_Remaining"
+    <Button
+        android:id="@+id/button_ID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="calories remaining"
-        android:textSize="60sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="4dp"
+
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="14dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/list_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_ID"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/Breakfast"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="breakfast"
-        android:textSize="45sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/Calories_Remaining" />
-
-
     <ListView
-        android:id="@+id/Output_Breakfast"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="347dp"
-        android:padding="10dp"
+        android:id="@+id/list_ID"
+        android:layout_width="409dp"
+        android:layout_height="109dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="375dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/GetFromDatabase" />
-
-    <Button
-
-        android:id="@+id/GetFromDatabase"
-        android:layout_width="80dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="8dp"
-        android:text="add"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/Output_Breakfast"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/Input_Breakfast"
-        app:layout_constraintTop_toBottomOf="@+id/Calories_Remaining" />
+        app:layout_constraintTop_toBottomOf="@+id/button_ID" />
 
     <EditText
-        android:id="@+id/Input_Breakfast"
-        android:layout_width="330dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="8dp"
-        android:hint="type food here"
-        app:layout_constraintBottom_toTopOf="@+id/Output_Breakfast"
-        app:layout_constraintEnd_toStartOf="@+id/GetFromDatabase"
+        android:id="@+id/editText_ID"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="3dp"
+        android:hint="Enter food name"
+        app:layout_constraintBottom_toTopOf="@+id/list_ID"
+        app:layout_constraintEnd_toStartOf="@+id/button_ID"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Breakfast" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
