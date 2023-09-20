@@ -62,20 +62,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
 
         //binding = ActivityMainBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(mCurrentSelectedItemId);
+        navView.setSelectedItemId(R.id.navigation_home);
         navView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-            // Check if the item is already selected
+            /* Check if the item is already selected
             if (itemId == mCurrentSelectedItemId) {
                 return false;
-            }
+            }*/
 
             if (itemId == R.id.navigation_home) {
                 return false;  // Stay on the same screen
@@ -101,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-
-        setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
 
@@ -158,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        
+
     }
 
 
