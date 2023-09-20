@@ -1,4 +1,4 @@
-package com.example.speakcalproject.ui;
+package com.example.speakcalproject;
 
 import android.app.AlertDialog;
 import android.content.Intent;

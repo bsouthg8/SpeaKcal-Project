@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +28,7 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        FirebaseApp.initializeApp(this);
 
         usernameEditText = findViewById(R.id.usernameEditText); // Change to usernameEditText
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -64,8 +66,9 @@ public class Login extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user =mAuth.getCurrentUser();
 
-                    Intent intent = new Intent(Login.this,PhotoRecognition.class);
+                    Intent intent = new Intent(Login.this,MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
                 else {
                     Toast.makeText(Login.this,"Authentication failed",Toast.LENGTH_SHORT).show();
