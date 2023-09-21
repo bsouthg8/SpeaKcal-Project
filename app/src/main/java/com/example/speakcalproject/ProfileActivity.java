@@ -1,20 +1,18 @@
 package com.example.speakcalproject;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
-
 import android.widget.ImageView;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,91 +21,74 @@ import java.io.IOException;
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText editTextName;
-    // Declare other EditText variables for other profile information
     private ImageView imageViewProfilePic;
     private static final int PICK_IMAGE_REQUEST = 1;
-
-    private int mCurrentSelectedItemId = R.id.navigation_profile; // default item
+    private int mCurrentSelectedItemId = R.id.navigation_profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // Initialize UI elements
+        editTextName = findViewById(R.id.editTextName);
+        imageViewProfilePic = findViewById(R.id.imageViewProfilePic);
+        Button buttonSave = findViewById(R.id.buttonSave);
+        Button buttonSelectImage = findViewById(R.id.buttonSelectImage);
+
+        // Initialize SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+
+        // Set initial UI states
+        String username = sharedPreferences.getString("username", "");
+        editTextName.setText(username);
+
+        // Bottom navigation
+        setupBottomNav();
+
+        // Event listeners
+        buttonSave.setOnClickListener(v -> saveProfileData());
+        buttonSelectImage.setOnClickListener(v -> openImageSelection());
+    }
+
+    private void setupBottomNav() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_profile);
+        navView.setSelectedItemId(mCurrentSelectedItemId);
         navView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-            // Check if the item is already selected
-            if (itemId == mCurrentSelectedItemId) {
+            if (itemId == mCurrentSelectedItemId) return false;
+
+            Intent intent = null;
+            int enterAnim = R.anim.slide_in_left;
+            int exitAnim = R.anim.slide_out_right;
+            if (itemId == R.id.navigation_home) {
+                intent = new Intent(this, MainActivity.class);
+            } else if (itemId == R.id.navigation_journal) {
+                intent = new Intent(this, TestJournal.class);
+            } else if (itemId == R.id.navigation_photo) {
+                intent = new Intent(this, PhotoRecognition.class);
+            } else if (itemId == R.id.navigation_profile) {
                 return false;
             }
 
-            if (itemId == R.id.navigation_profile) {
-                return false;  // Stay on the same screen
-            } else if (itemId == R.id.navigation_home) {
-                Intent intent = new Intent(this, MainActivity.class);
+            if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_journal) {
-                Intent intent = new Intent(this, TestJournal.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_photo) {
-                Intent intent = new Intent(this, PhotoRecognition.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
+                overridePendingTransition(enterAnim, exitAnim);
             }
-            return false;
-        });
-
-        // Retrieve the username from SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "");
-
-        editTextName = findViewById(R.id.editTextName);
-        // Initialize other EditText variables
-
-        // Set the username in the EditText for the name
-        editTextName.setText(username);
-
-        imageViewProfilePic = findViewById(R.id.imageViewProfilePic);
-
-        Button buttonSave = findViewById(R.id.buttonSave);
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveProfileData();
-            }
-        });
-
-        Button buttonSelectImage = findViewById(R.id.buttonSelectImage);
-        buttonSelectImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open the image selection dialog
-                openImageSelection();
-            }
+            return true;
         });
     }
-
 
     private void saveProfileData() {
         String name = editTextName.getText().toString();
-        // Get other profile information from EditText fields
-
-        // Save the data to a database or SharedPreferences
-        // You may also want to perform validation and error handling here
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", name);
+        editor.apply();
     }
 
-    // Open the image selection dialog
     private void openImageSelection() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -118,13 +99,9 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            // Get the selected image URI
             Uri imageUri = data.getData();
-
             try {
-                // Load and display the selected image
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 imageViewProfilePic.setImageBitmap(bitmap);
             } catch (IOException e) {
@@ -133,3 +110,4 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -63,46 +63,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //binding = ActivityMainBinding.inflate(getLayoutInflater());
-        //setContentView(binding.getRoot());
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_home);
-        navView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            /* Check if the item is already selected
-            if (itemId == mCurrentSelectedItemId) {
-                return false;
-            }*/
-
-            if (itemId == R.id.navigation_home) {
-                return false;  // Stay on the same screen
-            } else if (itemId == R.id.navigation_journal) {
-                Intent intent = new Intent(this, TestJournal.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_photo) {
-                Intent intent = new Intent(this, PhotoRecognition.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_profile) {
-                Intent intent = new Intent(this, ProfileActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            }
-            return false;
-        });
-
         FirebaseApp.initializeApp(this);
+
+        // Bottom navigation
+        setupBottomNav();
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
@@ -159,7 +123,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setupBottomNav() {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_home);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) return false;
 
+            Intent intent = null;
+            if (itemId == R.id.navigation_journal) {
+                intent = new Intent(this, TestJournal.class);
+            } else if (itemId == R.id.navigation_photo) {
+                intent = new Intent(this, PhotoRecognition.class);
+            } else if (itemId == R.id.navigation_profile) {
+                intent = new Intent(this, ProfileActivity.class);
+            }
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+    }
 
     public Double getCurrentDaysCalories() throws ParseException{
         Double totalCalories = 0.0;
