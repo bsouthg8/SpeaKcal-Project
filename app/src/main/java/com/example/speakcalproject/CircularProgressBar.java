@@ -8,9 +8,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import java.util.Calendar;
 
 public class CircularProgressBar extends View {

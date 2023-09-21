@@ -160,6 +160,44 @@ public class UserDatabaseManagement {
 
     }
 
+    public static void setDailyCaloriesLimitation(Context context, int dailyCaloriesLimitation) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("caloriesLimitation") != null) {
+                            db.collection("users").document(userID).update("caloriesLimitation", dailyCaloriesLimitation).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error update calories limitation", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            db.collection("users").document(userID).update("caloriesLimitation", dailyCaloriesLimitation).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error update calories limitation", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+
+                    }
+                } else {
+
+                }
+            });
+
+
+        }
+
+
+
+
+
+    }
+
     public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
