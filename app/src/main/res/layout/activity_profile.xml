@@ -2,18 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="48dp">
 
     <TextView
         android:id="@+id/textViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username" <!-- Changed the label to "Username" -->
-    android:layout_alignParentTop="true" />
-
-    <!-- Remove the EditText for the name -->
-
-    <!-- Add other EditText elements for profile information -->
+        android:text="Username"
+        android:layout_alignParentTop="true" />
 
     <ImageView
         android:id="@+id/imageViewProfilePic"
@@ -21,12 +18,10 @@
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textViewName"
-    <!-- Set a default profile picture -->
-    android:src="@drawable/default_profile_pic"
-    android:layout_marginTop="16dp"
-    <!-- Apply the border -->
-    android:background="@drawable/profile_image_border"
-    android:scaleType="centerCrop" />
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop" />
+    <!--android:src="@drawable/default_profile_pic"-->
+    <!--android:background="@drawable/profile_image_border"-->
 
 
     <Button
@@ -46,6 +41,19 @@
         android:layout_below="@+id/buttonSelectImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="?android:attr/windowBackground"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>
 
