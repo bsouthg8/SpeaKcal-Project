@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Journal_entry">
 
-
     <Button
         android:id="@+id/button_ID"
         android:layout_width="wrap_content"
@@ -30,6 +29,7 @@
         android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toTopOf="@+id/button2_ID"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_ID" />
 
@@ -40,19 +40,26 @@
         android:layout_marginTop="140dp"
         android:layout_marginEnd="9dp"
         android:hint="Enter food name"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/list_ID"
         app:layout_constraintEnd_toStartOf="@+id/button_ID"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/button2_ID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
         android:text="Button"
-        tools:layout_editor_absoluteX="304dp"
-        tools:layout_editor_absoluteY="324dp" />
+        app:layout_constraintBottom_toTopOf="@+id/list2_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText2_ID"
+        app:layout_constraintTop_toBottomOf="@+id/list_ID" />
 
     <ListView
         android:id="@+id/list2_ID"
@@ -73,6 +80,7 @@
         android:layout_marginTop="33dp"
         android:layout_marginEnd="4dp"
         android:hint="Enter food name"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/list2_ID"
         app:layout_constraintEnd_toStartOf="@+id/button2_ID"
         app:layout_constraintStart_toStartOf="parent"
@@ -109,6 +117,7 @@
         android:layout_marginTop="34dp"
         android:layout_marginBottom="3dp"
         android:hint="Enter food name"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/list3_ID"
         app:layout_constraintEnd_toStartOf="@+id/button3_ID"
         app:layout_constraintStart_toStartOf="parent"
