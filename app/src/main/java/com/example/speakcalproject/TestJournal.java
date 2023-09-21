@@ -9,6 +9,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class TestJournal extends AppCompatActivity {
 
+    private int mCurrentSelectedItemId = R.id.navigation_journal; // default item
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,12 +29,8 @@ public class TestJournal extends AppCompatActivity {
             if (itemId == R.id.navigation_journal) return false;
 
             Intent intent = null;
-            int enterAnim = R.anim.slide_in_right;
-            int exitAnim = R.anim.slide_out_left;
             if (itemId == R.id.navigation_home) {
                 intent = new Intent(this, MainActivity.class);
-                enterAnim = R.anim.slide_in_left;
-                exitAnim = R.anim.slide_out_right;
             } else if (itemId == R.id.navigation_photo) {
                 intent = new Intent(this, PhotoRecognition.class);
             } else if (itemId == R.id.navigation_profile) {
@@ -42,7 +40,7 @@ public class TestJournal extends AppCompatActivity {
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                overridePendingTransition(enterAnim, exitAnim);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             return true;
         });

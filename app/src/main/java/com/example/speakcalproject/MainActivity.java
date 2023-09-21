@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     dataSet.setValueTextSize(20f);
                     ArrayList<Integer> colors = new ArrayList<>();
                     colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.white));
+                    colors.add(getResources().getColor(R.color.colorGrey));
                     dataSet.setColors(colors);
 
                     PieData data = new PieData(dataSet);

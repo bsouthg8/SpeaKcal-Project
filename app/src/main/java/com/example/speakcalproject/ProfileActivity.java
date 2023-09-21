@@ -60,8 +60,6 @@ public class ProfileActivity extends AppCompatActivity {
             if (itemId == mCurrentSelectedItemId) return false;
 
             Intent intent = null;
-            int enterAnim = R.anim.slide_in_left;
-            int exitAnim = R.anim.slide_out_right;
             if (itemId == R.id.navigation_home) {
                 intent = new Intent(this, MainActivity.class);
             } else if (itemId == R.id.navigation_journal) {
@@ -75,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                overridePendingTransition(enterAnim, exitAnim);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             return true;
         });
