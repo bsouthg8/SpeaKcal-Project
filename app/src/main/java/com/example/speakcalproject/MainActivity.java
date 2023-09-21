@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateProgress(View view) {
-        int progress =(int) ((totalCalories / limitedCalories) * 100);
+        float progress = (float) ((totalCalories / limitedCalories) * 100);
         progressBar.setProgress(progress, String.valueOf(totalCalories));
     }
 
