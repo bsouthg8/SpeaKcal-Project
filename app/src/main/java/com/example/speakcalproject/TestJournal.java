@@ -16,39 +16,33 @@ public class TestJournal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_journal);
 
+        // Bottom navigation
+        setupBottomNav();
+
+    }
+
+    private void setupBottomNav() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_journal);
         navView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            if (itemId == R.id.navigation_journal) return false;
 
-            // Check if the item is already selected
-            if (itemId == mCurrentSelectedItemId) {
-                return false;
-            }
-
-            if (itemId == R.id.navigation_journal) {
-                return false;  // Stay on the same screen
-            } else if (itemId == R.id.navigation_home) {
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
+            Intent intent = null;
+            if (itemId == R.id.navigation_home) {
+                intent = new Intent(this, MainActivity.class);
             } else if (itemId == R.id.navigation_photo) {
-                Intent intent = new Intent(this, PhotoRecognition.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
+                intent = new Intent(this, PhotoRecognition.class);
             } else if (itemId == R.id.navigation_profile) {
-                Intent intent = new Intent(this, ProfileActivity.class);
+                intent = new Intent(this, ProfileActivity.class);
+            }
+
+            if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
             }
-            return false;
+            return true;
         });
-
     }
 }

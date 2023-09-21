@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
 
+        // Bottom navigation
+        setupBottomNav();
+
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
         pieChart = findViewById(R.id.pieChart);
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     dataSet.setValueTextSize(20f);
                     ArrayList<Integer> colors = new ArrayList<>();
                     colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.white));
+                    colors.add(getResources().getColor(R.color.colorGrey));
                     dataSet.setColors(colors);
 
                     PieData data = new PieData(dataSet);
@@ -139,7 +142,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setupBottomNav() {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_home);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) return false;
 
+            Intent intent = null;
+            if (itemId == R.id.navigation_journal) {
+                intent = new Intent(this, TestJournal.class);
+            } else if (itemId == R.id.navigation_photo) {
+                intent = new Intent(this, PhotoRecognition.class);
+            } else if (itemId == R.id.navigation_profile) {
+                intent = new Intent(this, ProfileActivity.class);
+            }
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+    }
 
     public Double getCurrentDaysCalories() throws ParseException{
         Double totalCalories = 0.0;

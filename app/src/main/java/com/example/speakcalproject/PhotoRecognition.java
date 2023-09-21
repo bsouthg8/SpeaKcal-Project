@@ -67,48 +67,8 @@ public class PhotoRecognition extends AppCompatActivity {
         FirebaseApp.initializeApp(getApplicationContext());
         ff = FirebaseFirestore.getInstance();
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_photo);
-        navView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            // Check if the item is already selected
-            if (itemId == mCurrentSelectedItemId) {
-                return false;
-            }
-
-            if (itemId == R.id.navigation_photo) {
-                return false;  // Stay on the same screen
-            } else if (itemId == R.id.navigation_home) {
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_journal) {
-                Intent intent = new Intent(this, TestJournal.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            } else if (itemId == R.id.navigation_profile) {
-                Intent intent = new Intent(this, ProfileActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                return true;
-            }
-            return false;
-        });
-
-
-        //waiting for main page
-/*        backToMainPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        }); */
+        // Bottom navigation
+        setupBottomNav();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +97,32 @@ public class PhotoRecognition extends AppCompatActivity {
             }
         });
     }
+
+    private void setupBottomNav() {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_photo);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_photo) return false;
+
+            Intent intent = null;
+            if (itemId == R.id.navigation_home) {
+                intent = new Intent(this, MainActivity.class);
+            } else if (itemId == R.id.navigation_journal) {
+                intent = new Intent(this, TestJournal.class);
+            } else if (itemId == R.id.navigation_profile) {
+                intent = new Intent(this, ProfileActivity.class);
+            }
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+    }
+
 
     //requestCode == 1 gallery
     //requestCode == 3 camera
