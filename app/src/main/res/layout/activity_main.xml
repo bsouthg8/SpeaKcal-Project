@@ -26,10 +26,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.github.mikephil.charting.charts.PieChart
+    <com.example.speakcalproject.CircularProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/pieChart"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintStart_toStartOf="parent"

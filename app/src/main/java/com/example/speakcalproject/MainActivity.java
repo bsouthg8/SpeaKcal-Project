@@ -2,10 +2,12 @@ package com.example.speakcalproject;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -50,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private String userName;
     private Map<String, Object> userInfo;
-    private PieChart pieChart;
+    private CircularProgressBar progressBar;
     private double limitedCalories;
+    private double totalCalories;
 
 
 
@@ -63,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
-        pieChart = findViewById(R.id.pieChart);
-
+        progressBar = findViewById(R.id.progressBar);
         //waiting for further modification
         limitedCalories = 2500;
 
@@ -76,37 +78,12 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("Welcome back\n"+userName);
 
                 try {
-                    Double totalCalories = getCurrentDaysCalories();
-                    List<PieEntry> entries = new ArrayList<>();
-                    entries.add(new PieEntry(new Float(totalCalories),"Taken"));
-                    //just testing now
-                    entries.add(new PieEntry(new Float(limitedCalories-totalCalories),"Left"));
+                    totalCalories = getCurrentDaysCalories();
+                    updateProgress(getCurrentFocus());
 
-                    PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
-                    dataSet.setValueTextSize(20f);
-                    ArrayList<Integer> colors = new ArrayList<>();
-                    colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.white));
-                    dataSet.setColors(colors);
 
-                    PieData data = new PieData(dataSet);
-                    pieChart.setData(data);
 
-                    pieChart.setDrawHoleEnabled(true);
-                    pieChart.setHoleColor(android.R.color.transparent);
-                    pieChart.setDrawEntryLabels(false);
-                    pieChart.getDescription().setEnabled(false);
 
-                    Calendar calendar = Calendar.getInstance();
-                    Date currentDate = calendar.getTime();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String formattedCurrentDate = dateFormat.format(currentDate);
-                    String centerText = totalCalories+" kcal "+formattedCurrentDate;
-                    pieChart.setCenterText(centerText);
-                    pieChart.setCenterTextSize(20f);
-                    pieChart.setCenterTextColor(R.color.black);
-
-                    pieChart.invalidate();
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -155,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return totalCalories;
+    }
+
+    public void updateProgress(View view) {
+        int progress =(int) ((totalCalories / limitedCalories) * 100);
+        progressBar.setProgress(progress, String.valueOf(totalCalories));
     }
 
 
