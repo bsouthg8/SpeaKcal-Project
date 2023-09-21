@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return true;
             } else if (itemId == R.id.navigation_profile) {
-                Intent intent = new Intent(this, TestProfile.class);
+                Intent intent = new Intent(this, ProfileActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
