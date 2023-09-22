@@ -14,17 +14,18 @@
         android:required="false" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SpeaKcalProject"
-        tools:targetApi="31">
-      
+        android:theme="@style/HiddenTitleTheme">
+        <activity android:name=".facts" />
+        <activity android:name=".Profile" />
         <activity
             android:name=".Login"
             android:exported="true"
@@ -54,17 +55,69 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
-        </activity>
-
-        <activity
             android:name=".UserDatabaseExample"
             android:exported="true">
             <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
         </activity>
 
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
+        </activity>
+        <activity
+            android:name=".NewDish"
+            android:label="New Dish"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.speakcalproject.MainActivity" />
+        </activity>
+        <activity
+            android:name=".MealsActivity"
+            android:label="Meals"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.speakcalproject.MainActivity" />
+        </activity>
+        <activity
+            android:name=".GroceriesActivity"
+            android:label="Groceries"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.speakcalproject.MainActivity" />
+        </activity>
+        <activity
+            android:name=".RecipeActivity"
+            android:label="Recipes"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.speakcalproject.MainActivity" />
+        </activity>
+        <activity
+            android:name=".RecipeViewActivity"
+            android:label="Recipes"
+            android:parentActivityName=".RecipeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.speakcalproject.RecipeActivity" />
+        </activity>
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+        <activity android:name=".NutriDataActivity" />
+        <activity
+            android:name=".AndroidDatabaseManager"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.example.speakcalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,14 +14,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Login extends AppCompatActivity {
 
     private EditText usernameEditText, passwordEditText;
     private Button login_button;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +30,7 @@ public class Login extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         login_button = findViewById(R.id.login_button);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,9 +40,27 @@ public class Login extends AppCompatActivity {
 
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(Login.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    loginUser(username,password);
+                    return;
                 }
+
+                // Use Firebase Authentication to sign in the user
+                // Replace "username" with the field you use to store usernames in Firebase
+                firebaseAuth.signInWithEmailAndPassword(username + "@example.com", password)
+                        .addOnCompleteListener(Login.this, task -> {
+                            if (task.isSuccessful()) {
+                                // Login successful
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                if (user != null) {
+                                    // Redirect to the main activity
+                                    Intent intent = new Intent(Login.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            } else {
+                                // Login failed
+                                Toast.makeText(Login.this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
     }
@@ -52,25 +68,5 @@ public class Login extends AppCompatActivity {
     public void openSignupActivity(View view) {
         Intent intent = new Intent(this, Signup.class);
         startActivity(intent);
-    }
-
-
-    //When MainActivity finished, change intent to MainActivity
-    public void loginUser(String userName, String passWord){
-        mAuth.signInWithEmailAndPassword(userName+"@example.com",passWord).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user =mAuth.getCurrentUser();
-
-                    Intent intent = new Intent(Login.this,PhotoRecognition.class);
-                    startActivity(intent);
-                }
-                else {
-                    Toast.makeText(Login.this,"Authentication failed",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
     }
 }
