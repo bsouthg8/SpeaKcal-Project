@@ -34,7 +34,7 @@
             android:layout_height="344dp"
             android:orientation="vertical"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
+            tools:layout_editor_absoluteY="8dp"></LinearLayout>
 
         <TextView
             android:id="@+id/title"

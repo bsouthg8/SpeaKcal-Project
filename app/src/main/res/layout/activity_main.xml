@@ -11,34 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Welcome Back"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            />
-        <androidx.cardview.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_view"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            card_view:cardCornerRadius="10dp">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="8dp"
-            android:padding="8dp"
-            android:src="@drawable/whatsfordinner" />
-        </androidx.cardview.widget.CardView>
-
-
-
         <androidx.cardview.widget.CardView
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view2"
