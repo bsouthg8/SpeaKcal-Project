@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Journal_entry">
+
+
+    <Button
+        android:id="@+id/button_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="137dp"
+        android:layout_marginEnd="12dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/list_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_ID"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/list_ID"
+        android:layout_width="409dp"
+        android:layout_height="109dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/button2_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_ID" />
+
+    <EditText
+        android:id="@+id/editText_ID"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp"
+        android:layout_marginEnd="9dp"
+        android:hint="Enter food name"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/list_ID"
+        app:layout_constraintEnd_toStartOf="@+id/button_ID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/button2_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/list2_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText2_ID"
+        app:layout_constraintTop_toBottomOf="@+id/list_ID" />
+
+    <ListView
+        android:id="@+id/list2_ID"
+        android:layout_width="409dp"
+        android:layout_height="109dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="34dp"
+        app:layout_constraintBottom_toTopOf="@+id/button3_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2_ID" />
+
+    <EditText
+        android:id="@+id/editText2_ID"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="4dp"
+        android:hint="Enter food name"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/list2_ID"
+        app:layout_constraintEnd_toStartOf="@+id/button2_ID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_ID" />
+
+    <Button
+        android:id="@+id/button3_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="19dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/list3_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText3_ID" />
+
+    <ListView
+        android:id="@+id/list3_ID"
+        android:layout_width="409dp"
+        android:layout_height="109dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="59dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button3_ID" />
+
+    <EditText
+        android:id="@+id/editText3_ID"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:layout_marginBottom="3dp"
+        android:hint="Enter food name"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/list3_ID"
+        app:layout_constraintEnd_toStartOf="@+id/button3_ID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list2_ID" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="102dp"
+        android:layout_marginEnd="296dp"
+        android:layout_marginBottom="4dp"
+        android:text="Breakfast"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/editText_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="337dp"
+        android:text="Lunch"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/editText2_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_ID" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="333dp"
+        android:layout_marginBottom="2dp"
+        android:text="Dinner"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/editText3_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list2_ID" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
