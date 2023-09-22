@@ -16,8 +16,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.Map;
 
 public class UserDatabaseExample extends AppCompatActivity {
-    private Button add,delete,get,addCalorie,addReward;
-    private EditText nameInput, passwordInput,foodNameInput,calorieInput,rewardInput;
+    private Button add,delete,get,addCalorie;
+    private EditText nameInput, passwordInput,foodNameInput,calorieInput;
     private TextView infoOutput;
 
 
@@ -34,57 +34,52 @@ public class UserDatabaseExample extends AppCompatActivity {
         foodNameInput = findViewById(R.id.editFoodName);
         calorieInput = findViewById(R.id.editFoodCalorie);
         infoOutput = findViewById(R.id.userInfoTextView);
-        addReward = findViewById(R.id.addRewardToDatabase);
-        rewardInput = findViewById(R.id.editReward);
-
-        addReward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String reward = rewardInput.getText().toString();
-                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward);
-            }
-        });
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!nameInput.getText().toString().isEmpty() && !passwordInput.getText().toString().isEmpty()) {
+                UserDatabaseManagement.addUser(UserDatabaseExample.this,nameInput.getText().toString(),passwordInput.getText().toString());
+                }
             }
         });
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!nameInput.getText().toString().isEmpty()) {
+                    UserDatabaseManagement.deleteUser(UserDatabaseExample.this, nameInput.getText().toString());
+                }
             }
         });
 
         get.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
+                if(!nameInput.getText().toString().isEmpty()) {
+                    UserDatabaseManagement.getUser(nameInput.getText().toString(), new OnSuccessListener<Map<String, Object>>() {
                         @Override
-                        public void onUserDataReceived(Map<String, Object> userData) {
-                            StringBuilder userDataText = new StringBuilder();
-                            for(Map.Entry<String, Object> entry: userData.entrySet() ){
-                                String key = entry.getKey();
-                                Object value = entry.getValue();
+                        public void onSuccess(Map<String, Object> userData) {
+                            String userName = (String) userData.get("Username");
+                            String passWord = (String) userData.get("Password");
+                            Map<String, Object> food = (Map<String, Object>) userData.get("Food");
+                            infoOutput.setText(userName+" "+passWord+" \n"+food);
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),"User is not in the database",Toast.LENGTH_SHORT).show();
 
-                                userDataText.append(key).append(": ").append(value).append("\n");
-                            }
-
-                            String userDataString = userDataText.toString();
-                            infoOutput.setText(userDataString);
                         }
                     });
-
+                }
             }
         });
 
         addCalorie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!nameInput.getText().toString().isEmpty() && !foodNameInput.getText().toString().isEmpty() && !calorieInput.getText().toString().isEmpty()) {
-                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
-                }
+                UserDatabaseManagement.addCalorieToUser(getApplicationContext(), nameInput.getText().toString(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
             }
         });
     }

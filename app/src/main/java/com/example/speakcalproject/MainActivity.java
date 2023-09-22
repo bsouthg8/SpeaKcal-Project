@@ -1,8 +1,12 @@
 package com.example.speakcalproject;
 
+import android.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.view.View;
+
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +24,16 @@ import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import android.widget.Toast;
+
+import android.os.Bundle;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -32,6 +46,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.speakcalproject.databinding.ActivityMainBinding;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.firebase.FirebaseApp;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
@@ -42,6 +57,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,10 +79,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         FirebaseApp.initializeApp(this);
+
 
         // Bottom navigation
         setupBottomNav();
+
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
@@ -74,6 +93,20 @@ public class MainActivity extends AppCompatActivity {
 
         //waiting for further modification
         limitedCalories = 2500;
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                .build();
+
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
@@ -120,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
 
     }
 

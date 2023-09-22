@@ -1,8 +1,11 @@
 package com.example.speakcalproject;
 
 import static android.provider.MediaStore.*;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -125,8 +128,8 @@ public class PhotoRecognition extends AppCompatActivity {
 
 
     //requestCode == 1 gallery
-    //requestCode == 3 camera
-    //requestCode == 2 retrieve calories data from database management
+    //requestCode == 2 camera
+    //requestCode == 3 retrieve calories data from database management
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK && requestCode != 2){
@@ -156,7 +159,6 @@ public class PhotoRecognition extends AppCompatActivity {
                 foodCalories = Float.parseFloat(data.getStringExtra("result"));
                 foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
                 result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),foodInfo.getFoodName(),foodInfo.getCalories());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
