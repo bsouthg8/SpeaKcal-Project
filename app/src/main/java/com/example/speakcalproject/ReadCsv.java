@@ -2,8 +2,6 @@ package com.example.speakcalproject;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.view.View;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
