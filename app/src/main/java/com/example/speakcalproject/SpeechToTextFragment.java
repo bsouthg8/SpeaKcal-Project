@@ -7,7 +7,10 @@ import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,37 +67,71 @@ public class SpeechToTextFragment extends Fragment {
 
         if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == getActivity().RESULT_OK) {
             String recognizedText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
+
+            // Remove instances of "breakfast", "lunch", and "dinner" from the recognizedText
+            recognizedText = recognizedText.replace("breakfast", "").replace("lunch", "").replace("dinner", "").trim();
+
             textView.setText(recognizedText);
 
-            // Determine the category based on recognized text
+            // Determine the category based on the original recognized text
             String category = "unknown";  // Default category
-            if (recognizedText.toLowerCase().contains("breakfast")) {
+            if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("breakfast")) {
                 category = "breakfast";
-            } else if (recognizedText.toLowerCase().contains("lunch")) {
+            } else if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("lunch")) {
                 category = "lunch";
-            } else if (recognizedText.toLowerCase().contains("dinner")) {
+            } else if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("dinner")) {
                 category = "dinner";
             }
 
-            // Save recognizedText to Firestore
-            Map<String, Object> textEntry = new HashMap<>();
-            textEntry.put("category", category);
-            textEntry.put("content", recognizedText);
+            // Setup and show the dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirm Entry");
+            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_speech_entry, null);
+            builder.setView(dialogView);
 
-            String finalCategory = category;
-            firestore.collection("SpeechToTextTests").add(textEntry)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(getContext(), "Saved to database under " + finalCategory, Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_LONG).show();
-                        }
-                    });
+            Spinner spinnerCategory = dialogView.findViewById(R.id.spinnerCategory);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                    R.array.food_categories, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCategory.setAdapter(adapter);
+            // Set default selected value based on recognized text
+            int defaultPosition = adapter.getPosition(category);
+            spinnerCategory.setSelection(defaultPosition);
+
+            EditText editRecognizedContent = dialogView.findViewById(R.id.editRecognizedContent);
+            editRecognizedContent.setText(recognizedText);
+
+            EditText editCalories = dialogView.findViewById(R.id.editCalories);
+
+            builder.setPositiveButton("Save", (dialog, which) -> {
+                // Save the data to Firestore
+                String finalCategory = spinnerCategory.getSelectedItem().toString();
+                String finalContent = editRecognizedContent.getText().toString();
+                String caloriesInput = editCalories.getText().toString();
+
+                // Save recognizedText to Firestore
+                Map<String, Object> textEntry = new HashMap<>();
+                textEntry.put("category", finalCategory);
+                textEntry.put("content", finalContent);
+                textEntry.put("calories", caloriesInput);
+
+                firestore.collection("Food").add(textEntry)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(getContext(), "Saved to database under " + finalCategory, Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
         }
     }
 

@@ -8,4 +8,9 @@
     <string name="title_profile">Profile</string>
     <string name="title_photorecognition">Photo Rec.</string>
     <string name="title_journal">Journal</string>
+    <string-array name="food_categories">
+        <item>breakfast</item>
+        <item>lunch</item>
+        <item>dinner</item>
+    </string-array>
 </resources>
