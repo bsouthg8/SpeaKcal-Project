@@ -109,7 +109,7 @@ public class PhotoRecognition extends AppCompatActivity {
             if (itemId == R.id.navigation_home) {
                 intent = new Intent(this, MainActivity.class);
             } else if (itemId == R.id.navigation_journal) {
-                intent = new Intent(this, TestJournal.class);
+                intent = new Intent(this, Journal_entry.class);
             } else if (itemId == R.id.navigation_profile) {
                 intent = new Intent(this, ProfileActivity.class);
             }

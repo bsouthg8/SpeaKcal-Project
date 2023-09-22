@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = null;
             if (itemId == R.id.navigation_journal) {
-                intent = new Intent(this, TestJournal.class);
+                intent = new Intent(this, Journal_entry.class);
             } else if (itemId == R.id.navigation_photo) {
                 intent = new Intent(this, PhotoRecognition.class);
             } else if (itemId == R.id.navigation_profile) {
