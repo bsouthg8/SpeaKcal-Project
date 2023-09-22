@@ -24,8 +24,14 @@ import android.widget.TextView;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.widget.Toast;
+import com.example.speakcalproject.R;
 
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
+import com.example.speakcalproject.ui.dashboard.DashboardFragment;
+import com.example.speakcalproject.ui.home.HomeFragment;
+import com.example.speakcalproject.ui.home.HomeViewModel;
+import com.example.speakcalproject.ui.notifications.NotificationsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -47,13 +53,15 @@ public class PhotoRecognition extends AppCompatActivity {
     private String foodName;
     private FirebaseFirestore ff;
 
+    private int mCurrentSelectedItemId = R.id.navigation_photo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle("Photo Recognition");
         setContentView(R.layout.activity_photo_recognition);
 
-        backToMainPage = findViewById((R.id.button4));
+        // backToMainPage = findViewById((R.id.button4));
         camera = findViewById(R.id.button);
         gallery = findViewById(R.id.button2);
         modify = findViewById(R.id.button3);
@@ -62,13 +70,8 @@ public class PhotoRecognition extends AppCompatActivity {
         FirebaseApp.initializeApp(getApplicationContext());
         ff = FirebaseFirestore.getInstance();
 
-        //waiting for main page
-        backToMainPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        // Bottom navigation
+        setupBottomNav();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +100,32 @@ public class PhotoRecognition extends AppCompatActivity {
             }
         });
     }
+
+    private void setupBottomNav() {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_photo);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_photo) return false;
+
+            Intent intent = null;
+            if (itemId == R.id.navigation_home) {
+                intent = new Intent(this, MainActivity.class);
+            } else if (itemId == R.id.navigation_journal) {
+                intent = new Intent(this, Journal_entry.class);
+            } else if (itemId == R.id.navigation_profile) {
+                intent = new Intent(this, ProfileActivity.class);
+            }
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+    }
+
 
     //requestCode == 1 gallery
     //requestCode == 2 camera

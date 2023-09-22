@@ -5,34 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PhotoRecognition">
-    <Button
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        app:labelVisibilityMode="labeled"
+        android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <!--<Button
         android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_above="@id/nav_view"
         android:text="Back to Mainpage"
         android:textAllCaps="false"
-        android:layout_alignParentBottom="true"
         android:textSize="21sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />-->
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:id="@+id/button3"
         android:text="Modify Food Info"
+        android:layout_marginBottom="20dp"
         android:textAllCaps="false"
-        android:layout_above="@id/button4"
+        android:layout_above="@id/nav_view"
         android:textSize="21sp"
         android:textStyle="bold" />
+
     <Button
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/button2"
         android:layout_centerInParent="true"
-        android:id="@+id/button"
         android:text="Take Picture"
         android:textAllCaps="false"
-        android:layout_above="@id/button2"
         android:textSize="21sp"
         android:textStyle="bold" />
     <Button
@@ -72,6 +90,5 @@
         android:textColor="#C30000"
         android:textSize="25sp"
         android:textStyle="bold" />
-
 
 </RelativeLayout>

@@ -8,10 +8,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,18 +27,49 @@ public class UserDatabaseManagement {
     //Username
     //Password
     //Food -> Map<Date+Time, FoodName+Calories>>
-    //Reward
-    public static void addUser(Context context, String userName, String passWord) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("Username",userName);
-        user.put("Password",passWord);
 
-        userCollection.add(user).addOnSuccessListener(documentReference -> {
-            Toast.makeText(context,"User added successfully", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(context,"Error adding user", Toast.LENGTH_SHORT).show();
-        });
-    }
+    //reward
+
+    //done
+    public static void addCalorieToUser(Context context, String foodName, float calories) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("Food") != null) {
+                            Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
+                            existingFoodData.put(dateTime,foodName+", "+calories);
+
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            Map<String, Object> existingFoodData = new HashMap<>();
+                            existingFoodData.put(dateTime,foodName+", "+calories);
+
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
+                            });
+
+                        }
+
 
     //delete user according to user name
     public static void deleteUser(Context context, String userName) {
@@ -74,35 +107,36 @@ public class UserDatabaseManagement {
         });
     }
 
-    //still working on it. most function works
-    public static void addCalorieToUser(Context context, String userName, String foodName, float calories) {
+    //done
+    public interface  OnUserDataCallback {
+        void onUserDataReceived(Map<String, Object> userData);
+    }
+    //done
+    public static void addRewardToUser(Context context, String reward){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
 
-        Query query = userCollection.whereEqualTo("Username", userName);
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
 
-        query.get().addOnSuccessListener(querySnapshot -> {
-            for (QueryDocumentSnapshot document : querySnapshot) {
-                String documentIdToUpdate = document.getId();
-                DocumentReference userDocRef = userCollection.document(documentIdToUpdate);
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("reward") != null) {
+                            Map<String, Object> existingRewardData = (Map<String, Object>) document.get("reward");
+                            existingRewardData.put(dateTime, reward);
 
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                int second = calendar.get(Calendar.SECOND);
-                String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
-
-                userCollection.document(documentIdToUpdate).get().addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> userData = documentSnapshot.getData();
-                        if (userData.containsKey("Food") && userData.get("Food") instanceof Map) {
-                            Map<String, Object> foodData = (Map<String, Object>) userData.get("Food");
-
-                            foodData.put(dateTime, foodName + "," + Float.toString(calories));
-
-                            userDocRef.update("Food", foodData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Food added successfully", Toast.LENGTH_SHORT).show();
+                            db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                              
                             }).addOnFailureListener(e -> {
                                 Toast.makeText(context, "Error adding food", Toast.LENGTH_SHORT).show();
                             });
@@ -162,4 +196,32 @@ public class UserDatabaseManagement {
 
     }
 
+    public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
+        double totalCalories = 0.0;
+
+        for(Map.Entry<String, Object> entry : data.entrySet()){
+            String dateTimeStr = entry.getKey();
+            String foodInfo = entry.getValue().toString();
+            dateTimeStr = dateTimeStr.split(" ")[0];
+            dateTimeStr.replace("\"","");
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = dateFormat.parse(dateTimeStr);
+            String currentDate = dateFormat.format(date);
+
+            if(currentDate.equals(targetDate)) {
+                String[] parts = foodInfo.split(", ");
+                if(parts.length == 2) {
+                    try {
+                        double calories = Double.parseDouble(parts[1]);
+                        totalCalories += calories;
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        return totalCalories;
+    }
 }
