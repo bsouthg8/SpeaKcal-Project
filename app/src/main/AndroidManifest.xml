@@ -14,18 +14,17 @@
         android:required="false" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/HiddenTitleTheme">
-        <activity android:name=".facts" />
-        <activity android:name=".Profile" />
+        android:theme="@style/Theme.SpeaKcalProject"
+        tools:targetApi="31">
+      
         <activity
             android:name=".Login"
             android:exported="true"
@@ -59,6 +58,7 @@
             android:exported="true">
             <!-- If you still need an intent filter here, add it; otherwise, keep it as is -->
         </activity>
+<<<<<<< HEAD
         <activity
             android:name=".NewDish"
             android:label="New Dish"
@@ -111,6 +111,8 @@
         <activity
             android:name=".AndroidDatabaseManager"
             android:label="@string/app_name" />
+=======
+>>>>>>> parent of d422ab8 (All Changes done)
 
     </application>
 
