@@ -108,14 +108,16 @@ public class PhotoRecognition extends AppCompatActivity {
             Intent intent = null;
             if (itemId == R.id.navigation_home) {
                 intent = new Intent(this, MainActivity.class);
+                finishAfterTransition();
             } else if (itemId == R.id.navigation_journal) {
                 intent = new Intent(this, Journal_entry.class);
+                finishAfterTransition();
             } else if (itemId == R.id.navigation_profile) {
                 intent = new Intent(this, ProfileActivity.class);
+                finishAfterTransition();
             }
 
             if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
