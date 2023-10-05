@@ -62,16 +62,18 @@ public class ProfileActivity extends AppCompatActivity {
             Intent intent = null;
             if (itemId == R.id.navigation_home) {
                 intent = new Intent(this, MainActivity.class);
+                finishAfterTransition();
             } else if (itemId == R.id.navigation_journal) {
                 intent = new Intent(this, Journal_entry.class);
+                finishAfterTransition();
             } else if (itemId == R.id.navigation_photo) {
                 intent = new Intent(this, PhotoRecognition.class);
+                finishAfterTransition();
             } else if (itemId == R.id.navigation_profile) {
                 return false;
             }
 
             if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
