@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private String userName;
     private Map<String, Object> userInfo;
     private PieChart pieChart;
+    private PieChart pieChart1;
     private double limitedCalories;
 
 
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
-        pieChart = findViewById(R.id.pieChart);
+        pieChart = findViewById(R.id.pieChart1);
+        pieChart1 = findViewById(R.id.pieChart2);
 
         //waiting for further modification
         limitedCalories = 2500;
@@ -85,9 +87,14 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Double totalCalories = getCurrentDaysCalories();
                     List<PieEntry> entries = new ArrayList<>();
-                    entries.add(new PieEntry(new Float(totalCalories),"Taken"));
+                    if(totalCalories >= limitedCalories){
+                        totalCalories = limitedCalories;
+                    }
+
+                    double totalPercentage = ((limitedCalories - totalCalories) / limitedCalories) * 100;
+                    entries.add(new PieEntry(new Float(totalCalories/limitedCalories) * 100,"Taken"));
                     //just testing now
-                    entries.add(new PieEntry(new Float(limitedCalories-totalCalories),"Left"));
+                    entries.add(new PieEntry(new Float(totalPercentage),"Left"));
 
                     PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
                     dataSet.setValueTextSize(20f);
@@ -108,12 +115,48 @@ public class MainActivity extends AppCompatActivity {
                     Date currentDate = calendar.getTime();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     String formattedCurrentDate = dateFormat.format(currentDate);
-                    String centerText = totalCalories+" kcal "+formattedCurrentDate;
+                    String centerText = "Today \n %";
                     pieChart.setCenterText(centerText);
                     pieChart.setCenterTextSize(20f);
                     pieChart.setCenterTextColor(R.color.black);
 
                     pieChart.invalidate();
+
+                    //Past 7 days Calculation
+                    Double pastTotalCalories = getTotalCaloriesForLast7Days();
+                    List<PieEntry> pastEntries = new ArrayList<>();
+                    Double pastDayLimit = limitedCalories * 7;
+
+                    if(pastTotalCalories >= pastDayLimit){
+                        pastTotalCalories = pastDayLimit;
+                    }
+                    double totalPercentage1 = ((pastDayLimit - pastTotalCalories) / pastDayLimit) * 100;
+                    pastEntries.add(new PieEntry(new Float(pastTotalCalories/pastDayLimit) * 100,"Taken"));
+                    //just testing now
+                    pastEntries.add(new PieEntry(new Float(totalPercentage1) ,"Left"));
+
+                    PieDataSet pastDataSet = new PieDataSet(pastEntries,"Total Calories");
+                    pastDataSet.setValueTextSize(20f);
+                    ArrayList<Integer> pastColors = new ArrayList<>();
+                    pastColors.add(getResources().getColor(R.color.colorAccent));
+                    pastColors.add(getResources().getColor(R.color.colorGrey));
+                    pastDataSet.setColors(pastColors);
+
+                    PieData pastData = new PieData(pastDataSet);
+                    pieChart1.setData(pastData);
+
+                    pieChart1.setDrawHoleEnabled(true);
+                    pieChart1.setHoleColor(android.R.color.transparent);
+                    pieChart1.setDrawEntryLabels(false);
+                    pieChart1.getDescription().setEnabled(false);
+
+
+                    String pastCenterText = "Past \n 7 \n days %";
+                    pieChart1.setCenterText(pastCenterText);
+                    pieChart1.setCenterTextSize(20f);
+                    pieChart1.setCenterTextColor(R.color.black);
+
+                    pieChart1.invalidate();
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -165,7 +208,25 @@ public class MainActivity extends AppCompatActivity {
 
         return totalCalories;
     }
+    public Double getTotalCaloriesForLast7Days() throws ParseException {
+        Double totalCalories = 0.0;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
+        for (int i = 0; i < 7; i++) {
+            Date currentDate = calendar.getTime();
+            String formattedCurrentDate = dateFormat.format(currentDate);
 
+            if (userInfo.get("Food") != null) {
+                Map<String, Object> userFoodInfo = (Map<String, Object>) userInfo.get("Food");
+                totalCalories += UserDatabaseManagement.calculateCaloriesForDate(userFoodInfo, formattedCurrentDate);
+            }
+
+            // Move the calendar back by one day
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+        }
+
+        return totalCalories;
+    }
 
 }
