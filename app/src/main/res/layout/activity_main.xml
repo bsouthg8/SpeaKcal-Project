@@ -26,14 +26,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- First Label - Daily Report -->
+    <TextView
+        android:id="@+id/dailyReportLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Report"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- First PieChart - Takes up 35% of screen height -->
     <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/pieChart"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintTop_toBottomOf="@+id/dailyReportLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.35" />
+
+    <!-- Second Label - Weekly Report -->
+    <TextView
+        android:id="@+id/weeklyReportLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weekly Report"
+        app:layout_constraintTop_toBottomOf="@+id/pieChart1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Second PieChart - Takes up 35% of screen height -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/weeklyReportLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.35" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -65,14 +96,13 @@
         android:id="@+id/speechFragment"
         android:name="com.example.speakcalproject.SpeechToTextFragment"
         android:layout_width="410dp"
-        android:layout_height="676dp"
         android:layout_marginBottom="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
