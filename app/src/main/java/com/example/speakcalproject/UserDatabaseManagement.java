@@ -108,6 +108,36 @@ public class UserDatabaseManagement {
             }
         });
     }
+
+    public static void updateLimitation(Context context, double newLimitation) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("calories limitation") != null) {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                } else {
+
+                }
+            });
+        }
+    }
     //done
     public interface  OnUserDataCallback {
         void onUserDataReceived(Map<String, Object> userData);

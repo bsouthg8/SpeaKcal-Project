@@ -70,16 +70,18 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         progressBar = findViewById(R.id.progressBar);
 
-        //waiting for further modification
-        limitedCalories = 2500;
-
-
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
                 userInfo = userData;
                 userName = (String) userData.get("username");
-                textView.setText("Welcome back\n"+userName);
+                textView.setText("Welcome back\n" + userName);
+
+                if(userData.get("calories limitation") != null){
+                    limitedCalories = (Double) userData.get("calories limitation");
+                } else {
+                    limitedCalories = 2500;
+                }
 
                 try {
                     totalCalories = getCurrentDaysCalories();
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateProgress(View view){
         float progress = (float) ((totalCalories/limitedCalories)*100);
-        progressBar.setProgress(progress,String.valueOf(totalCalories));
+        progressBar.setProgress(progress,String.valueOf(totalCalories),limitedCalories);
     }
 
 

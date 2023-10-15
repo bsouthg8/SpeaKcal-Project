@@ -22,6 +22,7 @@ public class CircularProgressBar extends View {
     private float progress = 0f;
     private String progressText = "";
     private int textSize = 100;
+    private double caloriesLimitation;
 
     public CircularProgressBar(Context context){
         super(context);
@@ -57,9 +58,10 @@ public class CircularProgressBar extends View {
         mTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
 
-    public void setProgress(float progress, String progressText){
+    public void setProgress(float progress, String progressText, double caloriesLimitation){
         this.progress = progress;
         this.progressText = progressText;
+        this.caloriesLimitation = caloriesLimitation;
         invalidate();
     }
 
@@ -92,7 +94,7 @@ public class CircularProgressBar extends View {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         String dateTime = String.format("%04d-%02d-%02d",year,month,day);
 
-        canvas.drawText(progressText+" Kcal", width/2,(height-mTextPaint.ascent())/2,mTextPaint);
+        canvas.drawText(progressText+"/"+caloriesLimitation+" Kcal", width/2,(height-mTextPaint.ascent())/2,mTextPaint);
         canvas.drawText(dateTime, width/2,(height-mTextPaint.ascent())/2+textSize,mTextPaint);
 
     }
