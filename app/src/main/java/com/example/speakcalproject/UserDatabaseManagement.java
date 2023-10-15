@@ -2,6 +2,9 @@ package com.example.speakcalproject;
 
 import android.content.Context;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -160,7 +163,7 @@ public class UserDatabaseManagement {
 
     }
 
-    public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
+    public static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
         for(Map.Entry<String, Object> entry : data.entrySet()){

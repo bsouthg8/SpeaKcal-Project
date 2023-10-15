@@ -50,12 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private String userName;
     private Map<String, Object> userInfo;
-    private PieChart pieChart;
+    private CircularProgressBar progressBar;
     private double limitedCalories;
-
-
+    private double totalCalories;
     private int mCurrentSelectedItemId = R.id.navigation_home; // default item
-
     FirebaseFirestore firestore;
 
 
@@ -70,10 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
-        pieChart = findViewById(R.id.pieChart);
+        progressBar = findViewById(R.id.progressBar);
 
         //waiting for further modification
         limitedCalories = 2500;
+
 
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
@@ -83,37 +82,8 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("Welcome back\n"+userName);
 
                 try {
-                    Double totalCalories = getCurrentDaysCalories();
-                    List<PieEntry> entries = new ArrayList<>();
-                    entries.add(new PieEntry(new Float(totalCalories),"Taken"));
-                    //just testing now
-                    entries.add(new PieEntry(new Float(limitedCalories-totalCalories),"Left"));
-
-                    PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
-                    dataSet.setValueTextSize(20f);
-                    ArrayList<Integer> colors = new ArrayList<>();
-                    colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.colorGrey));
-                    dataSet.setColors(colors);
-
-                    PieData data = new PieData(dataSet);
-                    pieChart.setData(data);
-
-                    pieChart.setDrawHoleEnabled(true);
-                    pieChart.setHoleColor(android.R.color.transparent);
-                    pieChart.setDrawEntryLabels(false);
-                    pieChart.getDescription().setEnabled(false);
-
-                    Calendar calendar = Calendar.getInstance();
-                    Date currentDate = calendar.getTime();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String formattedCurrentDate = dateFormat.format(currentDate);
-                    String centerText = totalCalories+" kcal "+formattedCurrentDate;
-                    pieChart.setCenterText(centerText);
-                    pieChart.setCenterTextSize(20f);
-                    pieChart.setCenterTextColor(R.color.black);
-
-                    pieChart.invalidate();
+                    totalCalories = getCurrentDaysCalories();
+                    updateProgress(getCurrentFocus());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -121,6 +91,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
+            @Override
+            public void onUserDataReceived(Map<String, Object> userData) {
+                userInfo = userData;
+                userName = (String) userData.get("username");
+                textView.setText("Welcome back\n"+userName);
+
+                try {
+                    totalCalories = getCurrentDaysCalories();
+                    updateProgress(getCurrentFocus());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
     }
 
     private void setupBottomNav() {
@@ -164,6 +155,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return totalCalories;
+    }
+
+    public void updateProgress(View view){
+        float progress = (float) ((totalCalories/limitedCalories)*100);
+        progressBar.setProgress(progress,String.valueOf(totalCalories));
     }
 
 
