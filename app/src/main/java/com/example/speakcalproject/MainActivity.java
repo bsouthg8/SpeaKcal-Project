@@ -3,46 +3,24 @@ package com.example.speakcalproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.speakcalproject.databinding.ActivityMainBinding;
-import com.google.android.material.slider.LabelFormatter;
+import androidx.work.NetworkType;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         progressBar = findViewById(R.id.progressBar);
 
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedCurrentDate = dateFormat.format(currentDate);
+
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
@@ -81,23 +64,47 @@ public class MainActivity extends AppCompatActivity {
                     limitedCalories = (Double) userData.get("calories limitation");
                 } else {
                     limitedCalories = 2500;
+                    UserDatabaseManagement.updateLimitation(getApplicationContext(),limitedCalories);
                 }
 
                 try {
-                    totalCalories = getCurrentDaysCalories();
+                    totalCalories = getCurrentDaysCalories(formattedCurrentDate);
                     updateProgress(getCurrentFocus());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
 
+
+
             }
         });
+
+        //Test
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest weeklyWorkRequest = new PeriodicWorkRequest.Builder(
+                WeeklyCheckDailyCaloriesWorker.class,
+                7, // Repeat interval in days (1 week)
+                TimeUnit.DAYS
+        )
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance().enqueue(weeklyWorkRequest);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedCurrentDate = dateFormat.format(currentDate);
+
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("Welcome back\n"+userName);
 
                 try {
-                    totalCalories = getCurrentDaysCalories();
+                    totalCalories = getCurrentDaysCalories(formattedCurrentDate);
                     updateProgress(getCurrentFocus());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
@@ -143,17 +150,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public Double getCurrentDaysCalories() throws ParseException{
+    public Double getCurrentDaysCalories(String targetDate) throws ParseException{
         Double totalCalories = 0.0;
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String formattedCurrentDate = dateFormat.format(currentDate);
-
 
         if (userInfo.get("Food") != null) {
             Map<String, Object> userFoodInfo = (Map<String, Object>) userInfo.get("Food");
-            totalCalories = UserDatabaseManagement.calculateCaloriesForDate(userFoodInfo,formattedCurrentDate);
+            totalCalories = UserDatabaseManagement.calculateCaloriesForDate(userFoodInfo,targetDate);
         }
 
         return totalCalories;

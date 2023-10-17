@@ -21,7 +21,7 @@ public class CircularProgressBar extends View {
     private RectF oval;
     private float progress = 0f;
     private String progressText = "";
-    private int textSize = 100;
+    private int textSize = 50;
     private double caloriesLimitation;
 
     public CircularProgressBar(Context context){

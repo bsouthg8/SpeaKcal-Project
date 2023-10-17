@@ -21,6 +21,9 @@ import java.util.Map;
 public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
+    public static Object lock = new Object();
+
+
 
 
     //add user database "User"
@@ -30,7 +33,7 @@ public class UserDatabaseManagement {
     //reward
 
     //done
-    public static void addCalorieToUser(Context context, String foodName, float calories) {
+    public synchronized static void addCalorieToUser(Context context, String foodName, float calories) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -89,7 +92,7 @@ public class UserDatabaseManagement {
     //}
     //});
     //done
-    public static void getUserData(Context context, OnUserDataCallback callback){
+    public static synchronized void getUserData(Context context, OnUserDataCallback callback){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
 
@@ -109,7 +112,7 @@ public class UserDatabaseManagement {
         });
     }
 
-    public static void updateLimitation(Context context, double newLimitation) {
+    public synchronized static void updateLimitation(Context context, double newLimitation) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -143,15 +146,15 @@ public class UserDatabaseManagement {
         void onUserDataReceived(Map<String, Object> userData);
     }
     //done
-    public static void addRewardToUser(Context context, String reward){
+    public synchronized static void addRewardToUser(Context context, String reward){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
@@ -193,7 +196,7 @@ public class UserDatabaseManagement {
 
     }
 
-    public static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
+    public synchronized static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
         for(Map.Entry<String, Object> entry : data.entrySet()){
