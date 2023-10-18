@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -90,6 +91,35 @@ public class Journal_entry extends AppCompatActivity {
         loadSavedDinnerData();
 
 
+//----------------------- to remove the items from the list vew --------------------------------
+
+        listViewBreakfast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                handleItemClick(position, foodListBreakfast, listViewBreakfast);
+            }
+        });
+
+        listViewLunch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                handleItemClick(position, foodListLunch, listViewLunch);
+            }
+        });
+
+        listViewDinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                handleItemClick(position, foodListDinner, listViewDinner);
+            }
+        });
+
+        private void handleItemClick(int position, ArrayList<Pair<String, String>> foodList, ListView listView) {
+            foodList.remove(position);
+            updateListView(foodList, listView);
+        }
+
+//-------------------------------------------------------------------------------------------------------------------------
         // James code that I have commented out for now
       // For button1
         buttonBreakfast.setOnClickListener(new View.OnClickListener() {
