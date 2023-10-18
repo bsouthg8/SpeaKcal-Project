@@ -46,6 +46,10 @@ public class Journal_entry extends AppCompatActivity {
     ArrayList<Pair<String, String>> foodListLunch = new ArrayList<>();
     ArrayList<Pair<String, String>> foodListDinner = new ArrayList<>();
 
+    private ListenerRegistration listener1;
+    private ListenerRegistration listener2;
+    private ListenerRegistration listener3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,11 +91,11 @@ public class Journal_entry extends AppCompatActivity {
 
 
         // James code that I have commented out for now
-/*        // For button1
-        button.setOnClickListener(new View.OnClickListener() {
+      // For button1
+        buttonBreakfast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userInput = editText.getText().toString();
+                String userInput = editTextBreakfast.getText().toString();
                 if (!userInput.isEmpty()) {
                     if (listener1 != null) {
                         listener1.remove();
@@ -99,7 +103,7 @@ public class Journal_entry extends AppCompatActivity {
                     listener1 = foodRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
-                            handleEvent(querySnapshot, e, userInput, listView);
+                            handleEvent(querySnapshot, e, userInput, listViewBreakfast);
                         }
                     });
                 } else {
@@ -107,15 +111,15 @@ public class Journal_entry extends AppCompatActivity {
                 }
 
                 // Reset the EditText field
-                editText.setText("");
+                editTextBreakfast.setText("");
             }
         });
 
 // For button2
-        button2.setOnClickListener(new View.OnClickListener() {
+        buttonLunch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userInput = editText2.getText().toString();
+                String userInput = editTextLunch.getText().toString();
                 if (!userInput.isEmpty()) {
                     if (listener2 != null) {
                         listener2.remove();
@@ -123,7 +127,7 @@ public class Journal_entry extends AppCompatActivity {
                     listener2 = foodRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
-                            handleEvent(querySnapshot, e, userInput, listView2);
+                            handleEvent(querySnapshot, e, userInput, listViewLunch);
                         }
                     });
                 } else {
@@ -131,15 +135,15 @@ public class Journal_entry extends AppCompatActivity {
                 }
 
                 // Reset the EditText field
-                editText2.setText("");
+                editTextLunch.setText("");
             }
         });
 
 // For button3
-        button3.setOnClickListener(new View.OnClickListener() {
+        buttonDinner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userInput = editText3.getText().toString();
+                String userInput = editTextDinner.getText().toString();
                 if (!userInput.isEmpty()) {
                     if (listener3 != null) {
                         listener3.remove();
@@ -147,7 +151,7 @@ public class Journal_entry extends AppCompatActivity {
                     listener3 = foodRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
-                            handleEvent(querySnapshot, e, userInput, listView3);
+                            handleEvent(querySnapshot, e, userInput, listViewDinner);
                         }
                     });
                 } else {
@@ -155,7 +159,7 @@ public class Journal_entry extends AppCompatActivity {
                 }
 
                 // Reset the EditText field
-                editText3.setText("");
+                editTextDinner.setText("");
             }
         });
 
@@ -200,7 +204,7 @@ public class Journal_entry extends AppCompatActivity {
             }
         };
 
-        listView.setAdapter(adapter);*/
+        listView.setAdapter(adapter);
     }
 
     private void setupBottomNav() {
