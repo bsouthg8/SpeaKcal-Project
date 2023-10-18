@@ -22,7 +22,6 @@ public class WeeklyCheckDailyCaloriesWorker extends Worker {
     private double dailyLimitation;
     final CountDownLatch latch = new CountDownLatch(1);
     private HashMap<String,Object> reward = new HashMap<>();
-    private Object lock;
 
     public WeeklyCheckDailyCaloriesWorker(@NonNull Context context, @NonNull WorkerParameters workerParams){
         super(context, workerParams);
@@ -59,7 +58,7 @@ public class WeeklyCheckDailyCaloriesWorker extends Worker {
 
                 latch.countDown();
             }
-        });
+        },1);
 
         try {
             latch.await(); // Wait until the latch counts down to 0
@@ -86,7 +85,6 @@ public class WeeklyCheckDailyCaloriesWorker extends Worker {
 
         }
 
-        //test
         if(!reward.isEmpty()){
 
             for (Map.Entry<String, Object> entry : reward.entrySet()) {

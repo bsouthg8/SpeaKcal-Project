@@ -92,7 +92,9 @@ public class UserDatabaseManagement {
     //}
     //});
     //done
-    public static synchronized void getUserData(Context context, OnUserDataCallback callback){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static synchronized void getUserData(Context context, OnUserDataCallback callback, int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
 
@@ -102,17 +104,25 @@ public class UserDatabaseManagement {
                 if(document.exists()) {
                     Map<String, Object> userData = (Map<String, Object>) document.getData();
                     callback.onUserDataReceived(userData);
-                    Toast.makeText(context,"User data retrieved successfully",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data retrieved successfully", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context,"User data does not exist",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data does not exist", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
-                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
+                if(status == 2) {
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    public synchronized static void updateLimitation(Context context, double newLimitation) {
+    //status 1 not show toast
+    //status 2 shows toast
+    public synchronized static void updateLimitation(Context context, double newLimitation, int status) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -123,15 +133,23 @@ public class UserDatabaseManagement {
                     if(document.exists()) {
                         if(document.get("calories limitation") != null) {
                             db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
                             });
                         } else {
                             db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
                             });
                         }
                     }
@@ -181,6 +199,50 @@ public class UserDatabaseManagement {
                                 Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
                             }).addOnFailureListener(e -> {
                                 Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                            });
+
+                        }
+
+                    }
+                } else {
+
+                }
+            });
+
+
+        }
+
+    }
+
+    public synchronized  static void addWeeklyRewardStatus(Context context, String targetWeek){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("weekly reward") != null) {
+                            Map<String, Boolean> existingRewardData = (Map<String, Boolean>) document.get("weekly reward");
+                            existingRewardData.put(targetWeek+""+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            Map<String, Boolean> existingRewardData = new HashMap<>();
+                            existingRewardData.put(targetWeek+""+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
                             });
 
                         }

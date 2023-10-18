@@ -74,7 +74,7 @@ public class UserDatabaseExample extends AppCompatActivity {
                             String userDataString = userDataText.toString();
                             infoOutput.setText(userDataString);
                         }
-                    });
+                    },1);
 
             }
         });
