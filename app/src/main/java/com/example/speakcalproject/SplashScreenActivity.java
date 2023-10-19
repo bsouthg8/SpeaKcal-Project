@@ -86,6 +86,9 @@ public class SplashScreenActivity extends AppCompatActivity {
                     ++count;
                 }
                 String summaryText = count + " days eat less than limitation at week " + lastWeekOfYear + " of year " + year;
+
+                taskQueue.clear();
+
                 executeDatabaseUpdateTasksSequentially(taskQueue,summaryText);
 
             }
@@ -158,13 +161,19 @@ public class SplashScreenActivity extends AppCompatActivity {
             });
             task.execute(rewardText);
             try {
-                Thread.sleep(1500);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         } else {
             // All tasks are done, you can execute the final task if needed
             executeFinalTask(input);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
