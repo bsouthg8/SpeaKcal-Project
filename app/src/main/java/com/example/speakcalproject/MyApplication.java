@@ -1,23 +1,19 @@
 package com.example.speakcalproject;
 
 import android.app.Application;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
-import java.util.concurrent.TimeUnit;
-
+import java.util.HashMap;
 
 public class MyApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    private HashMap<String, Object> globalData;
 
-        PeriodicWorkRequest weeklyWorkRequest = new PeriodicWorkRequest.Builder(
-                WeeklyCheckDailyCaloriesWorker.class,
-                7, // Repeat interval in days (1 week)
-                TimeUnit.DAYS
-        ).build();
-
-        WorkManager.getInstance(this).enqueue(weeklyWorkRequest);
+    public HashMap<String, Object> getGlobalData(){
+        return globalData;
     }
+
+    public void setGlobalData(HashMap<String, Object> data){
+        globalData = data;
+    }
+
+
 }

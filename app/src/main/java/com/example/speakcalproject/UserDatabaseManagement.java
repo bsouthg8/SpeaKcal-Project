@@ -21,7 +21,6 @@ import java.util.Map;
 public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
-    public static Object lock = new Object();
 
 
 
@@ -33,7 +32,7 @@ public class UserDatabaseManagement {
     //reward
 
     //done
-    public synchronized static void addCalorieToUser(Context context, String foodName, float calories) {
+    public static void addCalorieToUser(Context context, String foodName, float calories) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -94,7 +93,7 @@ public class UserDatabaseManagement {
     //done
     //status 1 not show toast
     //status 2 shows toast
-    public static synchronized void getUserData(Context context, OnUserDataCallback callback, int status){
+    public static void getUserData(Context context, OnUserDataCallback callback, int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
 
@@ -122,7 +121,7 @@ public class UserDatabaseManagement {
 
     //status 1 not show toast
     //status 2 shows toast
-    public synchronized static void updateLimitation(Context context, double newLimitation, int status) {
+    public static void updateLimitation(Context context, double newLimitation, int status) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -164,7 +163,7 @@ public class UserDatabaseManagement {
         void onUserDataReceived(Map<String, Object> userData);
     }
     //done
-    public synchronized static void addRewardToUser(Context context, String reward){
+    public static void addRewardToUser(Context context, String reward){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -214,7 +213,7 @@ public class UserDatabaseManagement {
 
     }
 
-    public synchronized  static void addWeeklyRewardStatus(Context context, String targetWeek){
+    public static void addWeeklyRewardStatus(Context context, String targetWeek){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -228,7 +227,7 @@ public class UserDatabaseManagement {
                     if(document.exists()) {
                         if(document.get("weekly reward") != null) {
                             Map<String, Boolean> existingRewardData = (Map<String, Boolean>) document.get("weekly reward");
-                            existingRewardData.put(targetWeek+""+year, true);
+                            existingRewardData.put(targetWeek+" "+year, true);
 
                             db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
@@ -237,7 +236,7 @@ public class UserDatabaseManagement {
                             });
                         } else {
                             Map<String, Boolean> existingRewardData = new HashMap<>();
-                            existingRewardData.put(targetWeek+""+year, true);
+                            existingRewardData.put(targetWeek+" "+year, true);
 
                             db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
@@ -258,7 +257,7 @@ public class UserDatabaseManagement {
 
     }
 
-    public synchronized static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
+    public static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
         for(Map.Entry<String, Object> entry : data.entrySet()){

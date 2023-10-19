@@ -2,28 +2,22 @@ package com.example.speakcalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.NetworkType;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +38,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
 
+        int count = getIntent().getIntExtra("count",0);
+
+        //show achievement
+        if(count != 0){
+            LayoutInflater inflater = getLayoutInflater();
+            View customToastView = inflater.inflate(R.layout.custom_goldmedal_layout,null);
+
+            ImageView medalImageView = customToastView.findViewById(R.id.medal);
+
+            Toast customToast = new Toast(getApplicationContext());
+            customToast.setDuration(Toast.LENGTH_SHORT);
+            customToast.setView(customToastView);
+            customToast.show();
+        }
+
         // Bottom navigation
         setupBottomNav();
 
@@ -62,13 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 userInfo = userData;
                 userName = (String) userData.get("username");
                 textView.setText("Welcome back\n" + userName);
-
-                if(userData.get("calories limitation") != null){
-                    limitedCalories = (Double) userData.get("calories limitation");
-                } else {
-                    limitedCalories = 2500;
-                    UserDatabaseManagement.updateLimitation(getApplicationContext(),limitedCalories,1);
-                }
+                limitedCalories = (Double) userData.get("calories limitation");
 
                 try {
                     totalCalories = getCurrentDaysCalories(formattedCurrentDate);
@@ -77,18 +80,8 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
-                //need more work
-                if(userData.get("weekly reward") != null){
-                    HashMap<String, Boolean> weeklyReward = (HashMap<String, Boolean>) userData.get("weekly reward");
-
-
-                }
-
-
-
             }
         },2);
-
     }
 
     @Override
@@ -160,40 +153,4 @@ public class MainActivity extends AppCompatActivity {
         float progress = (float) ((totalCalories/limitedCalories)*100);
         progressBar.setProgress(progress,String.valueOf(totalCalories),limitedCalories);
     }
-
-    public HashMap<String,Object> checkAndSetRewardForLastWeek() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        calendar.add(Calendar.DAY_OF_WEEK, -currentDayOfWeek -7 + Calendar.MONDAY); // Set to previous Monday
-        Date startDate = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_WEEK, 6); // Set to next Monday (current Sunday)
-        Date endDate = calendar.getTime();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        List<String> dateList = new ArrayList<>();
-        calendar.setTime(startDate);
-
-        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
-            dateList.add(dateFormat.format(calendar.getTime()));
-            calendar.add(Calendar.DAY_OF_WEEK, 1); // Move to the next day
-        }
-
-        String[] dateArray = dateList.toArray(new String[0]);
-
-        HashMap<String, Object> reward = new HashMap<>();
-
-        if(userInfo != null){
-            for(String targetDate : dateArray){
-                double targetDateCalories = getCurrentDaysCalories(targetDate);
-                if (targetDateCalories > 0 && targetDateCalories < limitedCalories) {
-                    reward.put(targetDate, targetDateCalories);
-                }
-            }
-        }
-
-        return reward;
-    }
-
-
-
 }
