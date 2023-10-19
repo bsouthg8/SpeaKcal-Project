@@ -44,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
         if(count != 0){
             LayoutInflater inflater = getLayoutInflater();
             View customToastView = inflater.inflate(R.layout.custom_goldmedal_layout,null);
-
             ImageView medalImageView = customToastView.findViewById(R.id.medal);
-
             Toast customToast = new Toast(getApplicationContext());
             customToast.setDuration(Toast.LENGTH_SHORT);
             customToast.setView(customToastView);
