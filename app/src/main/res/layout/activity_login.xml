@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="48dp"
+    android:background="@drawable/backgroundimage"
     tools:context=".Login">
 
 
@@ -51,6 +52,9 @@
         android:textStyle="bold"/>
 
 
+
+
 </LinearLayout>
+
 
 
