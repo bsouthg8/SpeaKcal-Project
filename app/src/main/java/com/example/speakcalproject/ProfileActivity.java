@@ -21,10 +21,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText editTextName;
+    private EditText editTextRewards;
     private ImageView imageViewProfilePic;
     private static final int PICK_IMAGE_REQUEST = 1;
     private int mCurrentSelectedItemId = R.id.navigation_profile;
@@ -35,13 +38,28 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        editTextRewards = findViewById(R.id.editTextRewards);
+        editTextRewards.setVisibility(View.INVISIBLE);
         // Initialize UI elements
         editTextName = findViewById(R.id.editTextName);
         imageViewProfilePic = findViewById(R.id.imageViewProfilePic);
         Button buttonSave = findViewById(R.id.buttonSave);
         Button buttonSelectImage = findViewById(R.id.buttonSelectImage);
         changeCaloriesLimitation = findViewById(R.id.buttonChangeCaloriesLimitation);
+
+        MyApplication myApp = (MyApplication) getApplication();
+        HashMap<String, Object> userInfo = myApp.getGlobalData();
+
+        if(userInfo.get("reward") != null) {
+            HashMap<String, Object> reward = (HashMap<String, Object>) userInfo.get("reward");
+            String rewards = "Achievements:"+"\n";
+
+            for (Map.Entry<String, Object> entry : reward.entrySet()){
+                rewards += entry.getKey()+" "+entry.getValue()+"\n";
+            }
+            editTextRewards.setText(rewards);
+            editTextRewards.setVisibility(View.VISIBLE);
+        }
 
         // Initialize SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
