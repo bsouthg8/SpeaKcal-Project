@@ -57,6 +57,16 @@ public class SplashScreenActivity extends AppCompatActivity {
             int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) - 1;
             int year = calendar.get(Calendar.YEAR);
 
+            if(lastWeekOfYear == 0){
+                calendar.add(Calendar.YEAR, -1);
+                year = calendar.get(Calendar.YEAR);
+
+                // Set the week to the last week of the previous year
+                calendar.set(Calendar.WEEK_OF_YEAR, calendar.getActualMaximum(Calendar.WEEK_OF_YEAR));
+                lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+
+            }
+
             if(userInfo.get("weekly reward") != null){
                 HashMap<String, Boolean> rewardStatus = (HashMap<String, Boolean>) userInfo.get("weekly reward");
                 if(!rewardStatus.containsKey(lastWeekOfYear+" "+year)){
