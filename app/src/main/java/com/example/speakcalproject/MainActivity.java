@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setGlobalData((HashMap<String, Object>) userData);
+
                 userInfo = userData;
                 userName = (String) userData.get("username");
                 textView.setText("Welcome back\n" + userName);
@@ -94,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setGlobalData((HashMap<String, Object>) userData);
                 userInfo = userData;
                 userName = (String) userData.get("username");
                 textView.setText("Welcome back\n"+userName);
