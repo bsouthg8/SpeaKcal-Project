@@ -1,8 +1,5 @@
 package com.example.speakcalproject;
 
-
-
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -13,7 +10,6 @@ import android.graphics.RectF;
 import android.view.View;
 import androidx.annotation.Nullable;
 import java.util.Calendar;
-
 
 public class CircularProgressBar extends View {
     private Paint paint;

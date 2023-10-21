@@ -50,7 +50,9 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:21.0.1")
     implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
     implementation("com.google.android.gms:play-services-tasks:18.0.2")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.testng:testng:6.9.6")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // Import the Firebase BoM

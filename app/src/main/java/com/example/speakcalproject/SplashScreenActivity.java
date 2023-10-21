@@ -1,9 +1,7 @@
 package com.example.speakcalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -27,6 +25,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private double limitedCalories;
     HashMap<String, Object> userInfo = new HashMap<>();
     private CountDownLatch userInfoLatch = new CountDownLatch(1);
+    Calendar calendar = Calendar.getInstance();
 
 
     @Override
@@ -66,11 +65,17 @@ public class SplashScreenActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Calendar calendar = Calendar.getInstance();
-            int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) - 1;
+            int subtract = 0;
+            if(calendar.DAY_OF_WEEK == 7){
+                subtract = 2;
+            } else {
+                subtract = 1;
+            }
+
+            int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) - subtract;
             int year = calendar.get(Calendar.YEAR);
 
-            if(lastWeekOfYear == 0){
+            if(lastWeekOfYear == 0 || lastWeekOfYear == -1){
                 calendar.add(Calendar.YEAR, -1);
                 year = calendar.get(Calendar.YEAR);
 
@@ -119,9 +124,10 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     public HashMap<String,Object> checkAndSetRewardForLastWeek() throws ParseException {
         MyApplication myApp = (MyApplication) getApplication();
-        Calendar calendar = Calendar.getInstance();
-        int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        calendar.add(Calendar.DAY_OF_WEEK, -currentDayOfWeek -7 + Calendar.MONDAY); // Set to previous Monday
+        int currentDayOfWeek = Calendar.DAY_OF_WEEK;
+        calendar.add(Calendar.DAY_OF_WEEK,  - 7 - (currentDayOfWeek - 1)); // Set to previous Monday
+
+
         Date startDate = calendar.getTime();
         calendar.add(Calendar.DAY_OF_WEEK, 6); // Set to next Monday (current Sunday)
         Date endDate = calendar.getTime();

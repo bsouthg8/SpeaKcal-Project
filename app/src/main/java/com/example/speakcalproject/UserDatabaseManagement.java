@@ -22,9 +22,6 @@ public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
 
-
-
-
     //add user database "User"
     //User structure:
     //username
