@@ -3,11 +3,12 @@ package com.example.speakcalproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-
-import com.example.speakcalproject.UserDatabaseManagement.OnUserDataCallback;
-
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Process;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,23 +20,32 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
 
 public class SplashScreenActivity extends AppCompatActivity {
     HashMap<String,Object> reward = new HashMap<>();
     private double limitedCalories;
+    HashMap<String, Object> userInfo = new HashMap<>();
+    private CountDownLatch userInfoLatch = new CountDownLatch(1);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        HandlerThread handlerThread = new HandlerThread("UserInfoThread", Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        Handler userInfoHandler = new Handler(looper);
+
+        userInfoHandler.post(() -> {
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setGlobalData((HashMap<String, Object>) userData);
+                userInfo = (HashMap<String, Object>) userData;
 
                 if(userData.get("calories limitation") != null){
                     limitedCalories = (Double) userData.get("calories limitation");
@@ -44,15 +54,18 @@ public class SplashScreenActivity extends AppCompatActivity {
                     UserDatabaseManagement.updateLimitation(getApplicationContext(),limitedCalories,1);
                 }
 
-
+                userInfoLatch.countDown();
             }
         },1);
-
-
+        });
 
         new Handler().postDelayed(() -> {
-            MyApplication myApp = (MyApplication) getApplication();
-            HashMap<String, Object> userInfo = myApp.getGlobalData();
+            try {
+                userInfoLatch.await(); // Wait for userInfo to become available
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             Calendar calendar = Calendar.getInstance();
             int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) - 1;
             int year = calendar.get(Calendar.YEAR);
@@ -75,6 +88,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
+                    UserDatabaseManagement.addWeeklyRewardStatus(getApplicationContext(), String.valueOf(lastWeekOfYear));
                 }
             } else {
                 UserDatabaseManagement.addWeeklyRewardStatus(getApplicationContext(), String.valueOf(lastWeekOfYear));
@@ -89,27 +103,18 @@ public class SplashScreenActivity extends AppCompatActivity {
             int count = 0;
 
             if(!reward.isEmpty()){
-                for (Map.Entry<String, Object> entry : reward.entrySet()) {
-                    String date = entry.getKey();
-                    String rewardText = date + " eats less than limitation";
-                    taskQueue.add(rewardText);
-                    ++count;
-                }
+                count = reward.size();
                 String summaryText = count + " days eat less than limitation at week " + lastWeekOfYear + " of year " + year;
-
-                taskQueue.clear();
-
-                executeDatabaseUpdateTasksSequentially(taskQueue,summaryText);
-
+                executeTask(summaryText);
             }
+
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("count",count);
             startActivity(intent);
             finish();
 
-        },3000);
-
+        },1000);
     }
 
     public HashMap<String,Object> checkAndSetRewardForLastWeek() throws ParseException {
@@ -158,36 +163,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         return totalCalories;
     }
 
-    private void executeDatabaseUpdateTasksSequentially(Queue<String> taskQueue,String input) {
-        if (!taskQueue.isEmpty()) {
-            String rewardText = taskQueue.poll();
 
-            DatabaseUpdateReward task = new DatabaseUpdateReward(new DatabaseUpdateReward.OnPostExecuteListener() {
-                @Override
-                public void onPostExecute() {
-                    // Task has completed, execute the next task
-                    executeDatabaseUpdateTasksSequentially(taskQueue,input);
-                }
-            });
-            task.execute(rewardText);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            // All tasks are done, you can execute the final task if needed
-            executeFinalTask(input);
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private void executeFinalTask(String input) {
+    private void executeTask(String input) {
         String summaryText = input; // Replace with your summary text
         DatabaseUpdateReward summaryTask = new DatabaseUpdateReward(new DatabaseUpdateReward.OnPostExecuteListener() {
             @Override

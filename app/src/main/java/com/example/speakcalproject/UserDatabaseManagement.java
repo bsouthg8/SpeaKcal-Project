@@ -162,8 +162,9 @@ public class UserDatabaseManagement {
     public interface  OnUserDataCallback {
         void onUserDataReceived(Map<String, Object> userData);
     }
-    //done
-    public static void addRewardToUser(Context context, String reward){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void addRewardToUser(Context context, String reward,int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -186,18 +187,26 @@ public class UserDatabaseManagement {
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
                         } else {
                             Map<String, Object> existingRewardData = new HashMap<>();
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
 
                         }

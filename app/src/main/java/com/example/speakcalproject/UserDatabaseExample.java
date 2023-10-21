@@ -41,7 +41,7 @@ public class UserDatabaseExample extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String reward = rewardInput.getText().toString();
-                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward);
+                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward,1);
             }
         });
 
