@@ -158,7 +158,9 @@ public class PhotoRecognition extends AppCompatActivity {
                 foodCalories = Float.parseFloat(data.getStringExtra("result"));
                 foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
                 result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),foodInfo.getFoodName(),foodInfo.getCalories());
+
+                // Show the dialog for the user to select a MealType
+                showMealTypeDialog();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -318,5 +320,19 @@ public class PhotoRecognition extends AppCompatActivity {
         startActivityForResult(intent,2);
     }
 
+    private void showMealTypeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Meal Type");
+
+        String[] mealTypes = {"Breakfast", "Lunch", "Dinner"};
+        builder.setItems(mealTypes, (dialog, which) -> {
+            String selectedMealType = mealTypes[which];
+            // Call the addCalorieToUser method with the selectedMealType
+            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodInfo.getFoodName(), foodInfo.getCalories(), selectedMealType);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 }

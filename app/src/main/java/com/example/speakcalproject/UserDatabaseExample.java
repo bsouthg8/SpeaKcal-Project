@@ -36,6 +36,7 @@ public class UserDatabaseExample extends AppCompatActivity {
         infoOutput = findViewById(R.id.userInfoTextView);
         addReward = findViewById(R.id.addRewardToDatabase);
         rewardInput = findViewById(R.id.editReward);
+        String mealTypeTest = "Breakfast";
 
         addReward.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +84,7 @@ public class UserDatabaseExample extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!nameInput.getText().toString().isEmpty() && !foodNameInput.getText().toString().isEmpty() && !calorieInput.getText().toString().isEmpty()) {
-                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
+                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()), mealTypeTest);
                 }
             }
         });

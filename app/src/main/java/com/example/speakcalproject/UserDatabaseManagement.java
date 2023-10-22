@@ -27,7 +27,7 @@ public class UserDatabaseManagement {
     //reward
 
     //done
-    public static void addCalorieToUser(Context context, String foodName, float calories) {
+    public static void addCalorieToUser(Context context, String foodName, float calories, String mealType) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -47,7 +47,7 @@ public class UserDatabaseManagement {
                     if(document.exists()) {
                         if(document.get("Food") != null) {
                             Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
-                            existingFoodData.put(dateTime,foodName+", "+calories);
+                            existingFoodData.put(dateTime,foodName+", "+calories+", "+mealType);
 
                             db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
@@ -56,7 +56,7 @@ public class UserDatabaseManagement {
                             });
                         } else {
                             Map<String, Object> existingFoodData = new HashMap<>();
-                            existingFoodData.put(dateTime,foodName+", "+calories);
+                            existingFoodData.put(dateTime,foodName+", "+calories+", "+mealType);
 
                             db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();

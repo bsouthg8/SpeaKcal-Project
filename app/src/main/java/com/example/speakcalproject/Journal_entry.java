@@ -2,10 +2,12 @@ package com.example.speakcalproject;
 
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -38,7 +40,6 @@ public class Journal_entry extends AppCompatActivity {
     Button buttonBreakfast, buttonLunch, buttonDinner;
     ListView listViewBreakfast, listViewLunch, listViewDinner;
     EditText editTextBreakfast, editTextLunch, editTextDinner;
-
     FirebaseFirestore db;
     CollectionReference foodRef;
 
@@ -84,9 +85,128 @@ public class Journal_entry extends AppCompatActivity {
         loadSavedBreakfastData();
         loadSavedLunchData();
         loadSavedDinnerData();
+    }
+
+    private void setupBottomNav() {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_journal);
+        navView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_journal) return false;
+
+            Intent intent = null;
+            if (itemId == R.id.navigation_home) {
+                intent = new Intent(this, MainActivity.class);
+                finishAfterTransition();
+            } else if (itemId == R.id.navigation_photo) {
+                intent = new Intent(this, PhotoRecognition.class);
+                finishAfterTransition();
+            } else if (itemId == R.id.navigation_profile) {
+                intent = new Intent(this, ProfileActivity.class);
+                finishAfterTransition();
+            }
+
+            if (intent != null) {
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+    }
+
+    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType) {
+        String userInput = editText.getText().toString();
+
+        if (!userInput.isEmpty()) {
+            foodRef.whereEqualTo("Name", userInput).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String name = document.getString("Name");
+                        String amount = document.getString("Amount");
+                        if (name != null && amount != null) {
+                            foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                            float calorieAmount = Float.parseFloat(amount);
+
+                            // Save the food entry to Firestore for the user
+                            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), name, calorieAmount, mealType);
+                        }
+                    }
+                    updateListView(foodList, listView);
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "Input cannot be empty", Toast.LENGTH_SHORT).show();
+        }
+        editText.setText("");
+    }
+
+    private void updateListView(ArrayList<Pair<String, String>> foodList, ListView listView) {
+        ArrayAdapter<Pair<String, String>> adapter = new ArrayAdapter<Pair<String, String>>(this, R.layout.list_item_layout, foodList) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view;
+                if (convertView == null) {
+                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    view = inflater.inflate(R.layout.list_item_layout, null);
+                } else {
+                    view = convertView;
+                }
+
+                Pair<String, String> pair = getItem(position);
+                TextView text1 = view.findViewById(R.id.text1);
+                TextView text2 = view.findViewById(R.id.text2);
+
+                if (pair != null) {
+                    text1.setText(pair.first);
+                    text2.setText(pair.second);
+                }
+                return view;
+            }
+        };
+        listView.setAdapter(adapter);
+    }
 
 
-        // James code that I have commented out for now
+    private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView) {
+        UserDatabaseManagement.getUserData(this, new UserDatabaseManagement.OnUserDataCallback() {
+            @Override
+            public void onUserDataReceived(Map<String, Object> userData) {
+                if (userData != null) {
+
+                    foodRef.whereEqualTo("MealType", mealType).get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String name = document.getString("Name");
+                                String amount = document.getString("Amount");
+                                if (name != null && amount != null) {
+                                    foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                                }
+                            }
+                            updateListView(foodList, listView);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+    private void loadSavedBreakfastData() {
+        loadSavedDataByMealType("Breakfast", foodListBreakfast, listViewBreakfast);
+    }
+
+    private void loadSavedLunchData() {
+        loadSavedDataByMealType("Lunch", foodListLunch, listViewLunch);
+    }
+
+    private void loadSavedDinnerData() {
+        loadSavedDataByMealType("Dinner", foodListDinner, listViewDinner);
+    }
+}
+
+
+// James code that I have commented out for now (This was in the onCreate method)
 /*        // For button1
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,110 +321,3 @@ public class Journal_entry extends AppCompatActivity {
         };
 
         listView.setAdapter(adapter);*/
-    }
-
-    private void setupBottomNav() {
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_journal);
-        navView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_journal) return false;
-
-            Intent intent = null;
-            if (itemId == R.id.navigation_home) {
-                intent = new Intent(this, MainActivity.class);
-                finishAfterTransition();
-            } else if (itemId == R.id.navigation_photo) {
-                intent = new Intent(this, PhotoRecognition.class);
-                finishAfterTransition();
-            } else if (itemId == R.id.navigation_profile) {
-                intent = new Intent(this, ProfileActivity.class);
-                finishAfterTransition();
-            }
-
-            if (intent != null) {
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-            return true;
-        });
-    }
-
-    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType) {
-        String userInput = editText.getText().toString();
-
-        if (!userInput.isEmpty()) {
-            foodRef.whereEqualTo("Name", userInput).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String name = document.getString("Name");
-                        String amount = document.getString("Amount");
-                        if (name != null && amount != null) {
-                            foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
-
-                            // Save the food entry to Firestore for the user
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("Name", name);
-                            data.put("Amount", amount);
-                            data.put("MealType", mealType);
-                            foodRef.add(data);
-                        }
-                    }
-                    updateListView(foodList, listView);
-                }
-            });
-        } else {
-            Toast.makeText(getApplicationContext(), "Input cannot be empty", Toast.LENGTH_SHORT).show();
-        }
-        editText.setText("");
-    }
-
-    private void updateListView(ArrayList<Pair<String, String>> foodList, ListView listView) {
-        ArrayAdapter<Pair<String, String>> adapter = new ArrayAdapter<Pair<String, String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, foodList) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                Pair<String, String> pair = (Pair<String, String>) getItem(position);
-                TextView text1 = view.findViewById(android.R.id.text1);
-                TextView text2 = view.findViewById(android.R.id.text2);
-
-                if (pair != null) {
-                    text1.setText(pair.first);
-                    text2.setText(pair.second);
-                }
-                return view;
-            }
-        };
-        listView.setAdapter(adapter);
-    }
-
-    private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView) {
-        foodRef.whereEqualTo("MealType", mealType).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    String name = document.getString("Name");
-                    String amount = document.getString("Amount");
-                    if (name != null && amount != null) {
-                        foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
-                    }
-                }
-                updateListView(foodList, listView);
-            }
-        });
-    }
-
-    private void loadSavedBreakfastData() {
-        loadSavedDataByMealType("Breakfast", foodListBreakfast, listViewBreakfast);
-    }
-
-    private void loadSavedLunchData() {
-        loadSavedDataByMealType("Lunch", foodListLunch, listViewLunch);
-    }
-
-    private void loadSavedDinnerData() {
-        loadSavedDataByMealType("Dinner", foodListDinner, listViewDinner);
-    }
-
-}
-
