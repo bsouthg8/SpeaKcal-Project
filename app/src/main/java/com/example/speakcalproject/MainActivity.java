@@ -7,15 +7,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String formattedCurrentDate = dateFormat.format(currentDate);
 
-        //change this part too
+        //change this part below too
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
 
-                    Double totalCalories = getCurrentDaysCalories();
+                    Double totalCalories = getCurrentDaysCalories(formattedCurrentDate);
                     List<PieEntry> entries = new ArrayList<>();
                     if(totalCalories >= limitedCalories){
                         totalCalories = limitedCalories;

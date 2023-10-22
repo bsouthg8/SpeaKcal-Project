@@ -32,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -173,6 +174,9 @@ public class Journal_entry extends AppCompatActivity {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
                 if (userData != null) {
+                    // You can access user-specific data here, if needed
+                    // For example, let's assume you have a 'preferredFoods' field in userData
+                    List<String> preferredFoods = (List<String>) userData.get("preferredFoods");
 
                     foodRef.whereEqualTo("MealType", mealType).get().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -180,6 +184,9 @@ public class Journal_entry extends AppCompatActivity {
                                 String name = document.getString("Name");
                                 String amount = document.getString("Amount");
                                 if (name != null && amount != null) {
+                                    if (preferredFoods != null && preferredFoods.contains(name)) {
+                                        // You can add some logic based on user's preferred foods
+                                    }
                                     foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
                                 }
                             }
@@ -188,8 +195,9 @@ public class Journal_entry extends AppCompatActivity {
                     });
                 }
             }
-        });
+        },1);
     }
+
 
 
     private void loadSavedBreakfastData() {
