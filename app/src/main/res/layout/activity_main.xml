@@ -37,12 +37,12 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- First PieChart - Takes up 35% of screen height -->
-<!--    <com.github.mikephil.charting.charts.PieChart
+   <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart1"
         android:layout_width="5dp"
         android:layout_height="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/dailyReportLabel"></com.github.mikephil.charting.charts.PieChart>
--->
+       app:layout_constraintTop_toBottomOf="@+id/dailyReportLabel"></com.github.mikephil.charting.charts.PieChart>
+
     <com.example.speakcalproject.CircularProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
