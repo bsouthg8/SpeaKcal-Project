@@ -71,19 +71,11 @@ public class SplashScreenActivity extends AppCompatActivity {
             } else {
                 subtract = 1;
             }
+            calendar.add(Calendar.WEEK_OF_YEAR, -subtract);
 
-            int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) - subtract;
+            int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR) ;
             int year = calendar.get(Calendar.YEAR);
 
-            if(lastWeekOfYear == 0 || lastWeekOfYear == -1){
-                calendar.add(Calendar.YEAR, -1);
-                year = calendar.get(Calendar.YEAR);
-
-                // Set the week to the last week of the previous year
-                calendar.set(Calendar.WEEK_OF_YEAR, calendar.getActualMaximum(Calendar.WEEK_OF_YEAR));
-                lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-
-            }
 
             if(userInfo.get("weekly reward") != null){
                 HashMap<String, Boolean> rewardStatus = (HashMap<String, Boolean>) userInfo.get("weekly reward");
@@ -125,43 +117,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     public HashMap<String,Object> checkAndSetRewardForLastWeek() throws ParseException {
         MyApplication myApp = (MyApplication) getApplication();
         // Set the calendar to the current date
-        calendar.setTime(new Date());
 
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-
-        // Check if it's the first week of the year
-        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-
-        if(day == 1){
-            --weekOfYear;
-            calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        }
-
-        if (weekOfYear == 1 || weekOfYear == 0) {
-            // If it's the first week, subtract one week and set the year to the previous year
-            calendar.add(Calendar.WEEK_OF_YEAR, -1);
-            calendar.add(Calendar.YEAR, -1);
-        } else {
-            // If it's not the first week, simply subtract one week
-            calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        }
-
-        Date startDate = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_WEEK, 6); // Set to next Monday (current Sunday)
-
-        Date endDate = calendar.getTime();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        List<String> dateList = new ArrayList<>();
-        calendar.setTime(startDate);
-
-        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
-            dateList.add(dateFormat.format(calendar.getTime()));
-            calendar.add(Calendar.DAY_OF_WEEK, 1); // Move to the next day
-        }
-
-        String[] dateArray = dateList.toArray(new String[0]);
+        String[] dateArray = getLastWeekDate();
 
         HashMap<String, Object> reward = new HashMap<>();
 
@@ -200,6 +157,39 @@ public class SplashScreenActivity extends AppCompatActivity {
         });
         summaryTask.execute(summaryText);
     }
+
+    public String[] getLastWeekDate(){
+        calendar.setTime(new Date());
+
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        if(day == 1){
+            calendar.add(Calendar.WEEK_OF_YEAR, -1);
+        }
+
+        calendar.add(Calendar.WEEK_OF_YEAR, -1);
+
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_WEEK, 6); // Set to next Monday (current Sunday)
+
+        Date endDate = calendar.getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        List<String> dateList = new ArrayList<>();
+        calendar.setTime(startDate);
+
+        while (calendar.getTime().before(endDate) || calendar.getTime().equals(endDate)) {
+            dateList.add(dateFormat.format(calendar.getTime()));
+            calendar.add(Calendar.DAY_OF_WEEK, 1); // Move to the next day
+        }
+
+        String[] dateArray = dateList.toArray(new String[0]);
+
+        return dateArray;
+    }
+
+
 
 
 
