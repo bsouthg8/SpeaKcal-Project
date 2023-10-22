@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Signup extends AppCompatActivity {
 
-    private EditText signupUsernameEditText, signupPasswordEditText, reenterPasswordEditText;
+    private EditText signupUsernameEditText, signupPasswordEditText, reenterPasswordEditText,dailyCaloriesLimitation;
     private Button signupButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -27,6 +27,7 @@ public class Signup extends AppCompatActivity {
         signupUsernameEditText = findViewById(R.id.signupUsernameEditText);
         signupPasswordEditText = findViewById(R.id.signupPasswordEditText);
         reenterPasswordEditText = findViewById(R.id.reenterPasswordEditText);
+        dailyCaloriesLimitation = findViewById(R.id.caloriesLimitation);
         signupButton = findViewById(R.id.signupButton);
 
         mAuth= FirebaseAuth.getInstance();
@@ -38,8 +39,10 @@ public class Signup extends AppCompatActivity {
                 String username = signupUsernameEditText.getText().toString();
                 String password = signupPasswordEditText.getText().toString();
                 String reenterPassword = reenterPasswordEditText.getText().toString();
+                String caloriesLimitation = dailyCaloriesLimitation.getText().toString();
+                double doubleCaloriesLimitation = Double.parseDouble(dailyCaloriesLimitation.getText().toString());
 
-                if (username.isEmpty() || password.isEmpty() || reenterPassword.isEmpty()) {
+                if (username.isEmpty() || password.isEmpty() || reenterPassword.isEmpty()|| caloriesLimitation.isEmpty()) {
                     Toast.makeText(Signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -49,17 +52,18 @@ public class Signup extends AppCompatActivity {
                     return;
                 }
 
-                registerUser(username, password);
+                registerUser(username, password,doubleCaloriesLimitation);
             }
         });
     }
 
-    private void registerUser(String username, String password) {
+    private void registerUser(String username, String password, double caloriesLimitation) {
         mAuth.createUserWithEmailAndPassword(username+"@example.com",password).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()) {
                 String userId = mAuth.getCurrentUser().getUid();
                 Map<String, Object> user = new HashMap<>();
                 user.put("username",username);
+                user.put("calories limitation",caloriesLimitation);
 
                 db.collection("users").document(userId).set(user).addOnSuccessListener(aVoid -> {
                     Toast.makeText(Signup.this,"User: "+username+" registered successfully",Toast.LENGTH_SHORT).show();

@@ -21,20 +21,12 @@ import android.widget.TextView;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.widget.Toast;
-import com.example.speakcalproject.R;
-
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
-import com.example.speakcalproject.ui.dashboard.DashboardFragment;
-import com.example.speakcalproject.ui.home.HomeFragment;
-import com.example.speakcalproject.ui.home.HomeViewModel;
-import com.example.speakcalproject.ui.notifications.NotificationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
-
 import java.io.IOException;
 import java.util.List;
 

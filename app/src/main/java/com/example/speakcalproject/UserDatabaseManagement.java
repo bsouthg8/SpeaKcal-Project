@@ -2,6 +2,9 @@ package com.example.speakcalproject;
 
 import android.content.Context;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -18,7 +21,6 @@ import java.util.Map;
 public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
-
 
     //add user database "User"
     //User structure:
@@ -86,7 +88,9 @@ public class UserDatabaseManagement {
     //}
     //});
     //done
-    public static void getUserData(Context context, OnUserDataCallback callback){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void getUserData(Context context, OnUserDataCallback callback, int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
 
@@ -96,29 +100,76 @@ public class UserDatabaseManagement {
                 if(document.exists()) {
                     Map<String, Object> userData = (Map<String, Object>) document.getData();
                     callback.onUserDataReceived(userData);
-                    Toast.makeText(context,"User data retrieved successfully",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data retrieved successfully", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context,"User data does not exist",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data does not exist", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
-                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
+                if(status == 2) {
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void updateLimitation(Context context, double newLimitation, int status) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("calories limitation") != null) {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(e -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(e -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                } else {
+
+                }
+            });
+        }
     }
     //done
     public interface  OnUserDataCallback {
         void onUserDataReceived(Map<String, Object> userData);
     }
-    //done
-    public static void addRewardToUser(Context context, String reward){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void addRewardToUser(Context context, String reward,int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
@@ -133,18 +184,26 @@ public class UserDatabaseManagement {
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
                         } else {
                             Map<String, Object> existingRewardData = new HashMap<>();
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
 
                         }
@@ -160,7 +219,51 @@ public class UserDatabaseManagement {
 
     }
 
-    public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
+    public static void addWeeklyRewardStatus(Context context, String targetWeek){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("weekly reward") != null) {
+                            Map<String, Boolean> existingRewardData = (Map<String, Boolean>) document.get("weekly reward");
+                            existingRewardData.put(targetWeek+" "+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            Map<String, Boolean> existingRewardData = new HashMap<>();
+                            existingRewardData.put(targetWeek+" "+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
+                            });
+
+                        }
+
+                    }
+                } else {
+
+                }
+            });
+
+
+        }
+
+    }
+
+    public static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
         for(Map.Entry<String, Object> entry : data.entrySet()){
