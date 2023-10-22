@@ -280,7 +280,7 @@ public class DateSetTest {
         Date date = new Date();
         date.setYear(2023 - 1900); // Years in Date are 1900-based
         date.setMonth(9); // Month is zero-based (0 for January)
-        date.setDate(22);
+        date.setDate(25);
         calendar.setTime(date);
 
         int subtract = 0;
