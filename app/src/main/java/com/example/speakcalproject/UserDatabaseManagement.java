@@ -278,7 +278,7 @@ public class UserDatabaseManagement {
 
             if(currentDate.equals(targetDate)) {
                 String[] parts = foodInfo.split(", ");
-                if(parts.length == 2) {
+                if(parts.length >= 2) {
                     try {
                         double calories = Double.parseDouble(parts[1]);
                         totalCalories += calories;
