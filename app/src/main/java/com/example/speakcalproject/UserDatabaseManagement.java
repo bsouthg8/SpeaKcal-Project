@@ -36,48 +36,48 @@ public class UserDatabaseManagement {
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH)+1;
+            int month = calendar.get(Calendar.MONTH) + 1;
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
-            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
+            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour, minute, second);
+
+            // Create a new Map to store the new meal entry
+            Map<String, Object> mealData = new HashMap<>();
+            mealData.put("dateTime", dateTime);
+            mealData.put("foodName", foodName);
+            mealData.put("calories", calories);
+            mealData.put("mealType", mealType);
 
             db.collection("users").document(userID).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    Map<String, Object> existingFoodData;  // Declare outside of the if-else block
                     if(document.exists()) {
                         if(document.get("Food") != null) {
-                            Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
-                            existingFoodData.put(dateTime,foodName+", "+calories+", "+mealType);
-
-                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
-                            });
+                            existingFoodData = (Map<String, Object>) document.get("Food");
+                            existingFoodData.put(dateTime, mealData);
                         } else {
-                            Map<String, Object> existingFoodData = new HashMap<>();
-                            existingFoodData.put(dateTime,foodName+", "+calories+", "+mealType);
-
-                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
-                            });
-
+                            existingFoodData = new HashMap<>();
+                            existingFoodData.put(dateTime, mealData);
                         }
 
+                        // Now existingFoodData is accessible here
+                        db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                            Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(context, "Error adding food to database", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 } else {
-
+                    // Handle failure
                 }
             });
-
-
         }
-
     }
+
+
 
     //When need to retrieve user data
     //user method like below:
@@ -263,32 +263,46 @@ public class UserDatabaseManagement {
 
     }
 
-    public static double calculateCaloriesForDate(@NonNull Map<String,Object>data, String targetDate) throws ParseException {
+    public static double calculateCaloriesForDate(@NonNull Map<String, Object> data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
-        for(Map.Entry<String, Object> entry : data.entrySet()){
-            String dateTimeStr = entry.getKey();
-            String foodInfo = entry.getValue().toString();
-            dateTimeStr = dateTimeStr.split(" ")[0];
-            dateTimeStr.replace("\"","");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String dateTimeStr = entry.getKey();
+            dateTimeStr = dateTimeStr.split(" ")[0];
+            dateTimeStr.replace("\"", "");
+
             Date date = dateFormat.parse(dateTimeStr);
             String currentDate = dateFormat.format(date);
 
-            if(currentDate.equals(targetDate)) {
-                String[] parts = foodInfo.split(", ");
-                if(parts.length >= 2 ) {
+            if (currentDate.equals(targetDate)) {
+                Object foodInfoObj = entry.getValue();
+
+                if (foodInfoObj instanceof String) {
+                    // Handling old data format
+                    String foodInfo = foodInfoObj.toString();
+                    String[] parts = foodInfo.split(", ");
+                    if (parts.length >= 2) {
+                        try {
+                            double calories = Double.parseDouble(parts[1]);
+                            totalCalories += calories;
+                        } catch (NumberFormatException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else if (foodInfoObj instanceof Map) {
+                    // Handling new data format
+                    Map<String, Object> foodInfo = (Map<String, Object>) foodInfoObj;
                     try {
-                        double calories = Double.parseDouble(parts[1]);
+                        double calories = (double) foodInfo.get("calories");
                         totalCalories += calories;
-                    } catch (NumberFormatException e) {
-                        throw new RuntimeException(e);
+                    } catch (ClassCastException e) {
+                        throw new RuntimeException("Invalid data type for calories", e);
                     }
                 }
             }
         }
-
         return totalCalories;
     }
 }

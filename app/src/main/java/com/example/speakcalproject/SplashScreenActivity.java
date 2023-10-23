@@ -27,8 +27,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private CountDownLatch userInfoLatch = new CountDownLatch(1);
     Calendar calendar = Calendar.getInstance();
 
-
-    @Override
+/*    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
@@ -112,6 +111,83 @@ public class SplashScreenActivity extends AppCompatActivity {
             finish();
 
         },1000);
+    }*/
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash_screen);
+
+        HandlerThread handlerThread = new HandlerThread("UserInfoThread", Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        Handler userInfoHandler = new Handler(looper);
+
+        userInfoHandler.post(() -> {
+            UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
+                @Override
+                public void onUserDataReceived(Map<String, Object> userData) {
+                    // Once data is received, update the necessary variables and proceed with the next steps
+                    updateUserData(userData);
+                    runOnUiThread(() -> fetchDataAndProceed());  // Switch back to UI thread to update UI or navigate
+                }
+            }, 1);
+        });
+    }
+
+    private void updateUserData(Map<String, Object> userData) {
+        MyApplication myApp = (MyApplication) getApplication();
+        myApp.setGlobalData((HashMap<String, Object>) userData);
+        userInfo = (HashMap<String, Object>) userData;
+
+        if (userData.get("calories limitation") != null) {
+            limitedCalories = (Double) userData.get("calories limitation");
+        } else {
+            limitedCalories = 2500;
+            UserDatabaseManagement.updateLimitation(getApplicationContext(), limitedCalories, 1);
+        }
+    }
+
+    private void fetchDataAndProceed() {
+        int subtract = 0;
+        if (calendar.get(Calendar.DAY_OF_WEEK) == 1) {
+            subtract = 2;
+        } else {
+            subtract = 1;
+        }
+        calendar.add(Calendar.WEEK_OF_YEAR, -subtract);
+
+        int lastWeekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+        int year = calendar.get(Calendar.YEAR);
+
+        try {
+            if (userInfo.get("weekly reward") != null) {
+                HashMap<String, Boolean> rewardStatus = (HashMap<String, Boolean>) userInfo.get("weekly reward");
+                if (!rewardStatus.containsKey(lastWeekOfYear + " " + year)) {
+                    reward = checkAndSetRewardForLastWeek();
+                    UserDatabaseManagement.addWeeklyRewardStatus(getApplicationContext(), String.valueOf(lastWeekOfYear));
+                }
+            } else {
+                UserDatabaseManagement.addWeeklyRewardStatus(getApplicationContext(), String.valueOf(lastWeekOfYear));
+                reward = checkAndSetRewardForLastWeek();
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Queue<String> taskQueue = new LinkedList<>();
+        int count = 0;
+
+        if (!reward.isEmpty()) {
+            count = reward.size();
+            String summaryText = count + " days eat less than limitation at week " + lastWeekOfYear + " of year " + year;
+            executeTask(summaryText);
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("count", count);
+        startActivity(intent);
+        finish();
     }
 
     public HashMap<String,Object> checkAndSetRewardForLastWeek() throws ParseException {
@@ -188,8 +264,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         return dateArray;
     }
-
-
 
 
 

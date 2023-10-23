@@ -22,7 +22,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -170,34 +173,40 @@ public class Journal_entry extends AppCompatActivity {
 
 
     private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView) {
-        UserDatabaseManagement.getUserData(this, new UserDatabaseManagement.OnUserDataCallback() {
-            @Override
-            public void onUserDataReceived(Map<String, Object> userData) {
-                if (userData != null) {
-                    // You can access user-specific data here, if needed
-                    // For example, let's assume you have a 'preferredFoods' field in userData
-                    List<String> preferredFoods = (List<String>) userData.get("preferredFoods");
-
-                    foodRef.whereEqualTo("MealType", mealType).get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String name = document.getString("Name");
-                                String amount = document.getString("Amount");
-                                if (name != null && amount != null) {
-                                    if (preferredFoods != null && preferredFoods.contains(name)) {
-                                        // You can add some logic based on user's preferred foods
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> allFoodData = (Map<String, Object>) document.get("Food");
+                        if (allFoodData != null) {
+                            for (Map.Entry<String, Object> entry : allFoodData.entrySet()) {
+                                Object value = entry.getValue();
+                                if (value instanceof Map) {
+                                    Map<String, Object> foodData = (Map<String, Object>) value;
+                                    if (mealType.equals(foodData.get("mealType"))) {
+                                        String name = (String) foodData.get("foodName");
+                                        Double tempAmount = (Double) foodData.get("calories");
+                                        float amount = tempAmount.floatValue();
+                                        foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
                                     }
-                                    foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                                } else if (value instanceof String) {
+                                    // Handle the old format (String)
+                                    String[] parts = ((String) value).split(", ");
+                                    if (parts.length == 3 && mealType.equals(parts[2])) {
+                                        foodList.add(new Pair<>("Food: " + parts[0], "Calories: " + parts[1]));
+                                    }
                                 }
                             }
-                            updateListView(foodList, listView);
                         }
-                    });
+                        updateListView(foodList, listView);
+                    }
                 }
-            }
-        },1);
+            });
+        }
     }
-
 
 
     private void loadSavedBreakfastData() {
