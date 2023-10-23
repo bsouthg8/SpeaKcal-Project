@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private String userName;
     private Map<String, Object> userInfo;
-    private PieChart pieChart;
     private PieChart pieChart1;
     private CircularProgressBar progressBar;
     private double limitedCalories;
@@ -65,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
-        pieChart = findViewById(R.id.pieChart1);
         pieChart1 = findViewById(R.id.pieChart2);
         progressBar = findViewById(R.id.progressBar);
 
@@ -87,43 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 limitedCalories = (Double) userData.get("calories limitation");
 
                 try {
-
-                    Double totalCalories = getCurrentDaysCalories(formattedCurrentDate);
-                    List<PieEntry> entries = new ArrayList<>();
-                    if(totalCalories >= limitedCalories){
-                        totalCalories = limitedCalories;
-                    }
-
-                    double totalPercentage = ((limitedCalories - totalCalories) / limitedCalories) * 100;
-                    entries.add(new PieEntry(new Float(totalCalories/limitedCalories) * 100,"Taken"));
-                    //just testing now
-                    entries.add(new PieEntry(new Float(totalPercentage),"Left"));
-
-                    PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
-                    dataSet.setValueTextSize(20f);
-                    ArrayList<Integer> colors = new ArrayList<>();
-                    colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.colorGrey));
-                    dataSet.setColors(colors);
-
-                    PieData data = new PieData(dataSet);
-                    pieChart.setData(data);
-
-                    pieChart.setDrawHoleEnabled(true);
-                    pieChart.setHoleColor(android.R.color.transparent);
-                    pieChart.setDrawEntryLabels(false);
-                    pieChart.getDescription().setEnabled(false);
-
-                    Calendar calendar = Calendar.getInstance();
-                    Date currentDate = calendar.getTime();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String formattedCurrentDate = dateFormat.format(currentDate);
-                    String centerText = "Today \n %";
-                    pieChart.setCenterText(centerText);
-                    pieChart.setCenterTextSize(20f);
-                    pieChart.setCenterTextColor(R.color.black);
-
-                    pieChart.invalidate();
 
                     //Past 7 days Calculation
                     Double pastTotalCalories = getTotalCaloriesForLast7Days();
