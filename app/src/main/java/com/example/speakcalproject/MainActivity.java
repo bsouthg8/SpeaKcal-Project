@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         // Bottom navigation
         setupBottomNav();
 
-        imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
         pieChart1 = findViewById(R.id.pieChart2);
         progressBar = findViewById(R.id.progressBar);
