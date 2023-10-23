@@ -33,7 +33,11 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,10 +89,50 @@ public class Journal_entry extends AppCompatActivity {
         buttonLunch.setOnClickListener(v -> handleButtonClick(editTextLunch, foodListLunch, listViewLunch, "Lunch"));
         buttonDinner.setOnClickListener(v -> handleButtonClick(editTextDinner, foodListDinner, listViewDinner, "Dinner"));
 
-        // Load the saved data for each meal category when the activity is created
-        loadSavedBreakfastData();
-        loadSavedLunchData();
-        loadSavedDinnerData();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final String[] targetDate = {dateFormat.format(new Date())};
+
+        // Load initial data
+        loadSavedBreakfastData(targetDate[0]);
+        loadSavedLunchData(targetDate[0]);
+        loadSavedDinnerData(targetDate[0]);
+
+        Button prevButton = findViewById(R.id.prevButton);
+        Button nextButton = findViewById(R.id.nextButton);
+
+        prevButton.setOnClickListener(v -> {
+            try {
+                Date date = dateFormat.parse(targetDate[0]);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                cal.add(Calendar.DATE, -1);
+                targetDate[0] = dateFormat.format(cal.getTime());
+
+                // Reload data
+                loadSavedBreakfastData(targetDate[0]);
+                loadSavedLunchData(targetDate[0]);
+                loadSavedDinnerData(targetDate[0]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+
+        nextButton.setOnClickListener(v -> {
+            try {
+                Date date = dateFormat.parse(targetDate[0]);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                cal.add(Calendar.DATE, 1);
+                targetDate[0] = dateFormat.format(cal.getTime());
+
+                // Reload data
+                loadSavedBreakfastData(targetDate[0]);
+                loadSavedLunchData(targetDate[0]);
+                loadSavedDinnerData(targetDate[0]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void setupBottomNav() {
@@ -172,7 +216,7 @@ public class Journal_entry extends AppCompatActivity {
     }
 
 
-    private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView) {
+    private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView, String targetDate) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String userID = currentUser.getUid();
@@ -187,10 +231,13 @@ public class Journal_entry extends AppCompatActivity {
                                 if (value instanceof Map) {
                                     Map<String, Object> foodData = (Map<String, Object>) value;
                                     if (mealType.equals(foodData.get("mealType"))) {
-                                        String name = (String) foodData.get("foodName");
-                                        Double tempAmount = (Double) foodData.get("calories");
-                                        float amount = tempAmount.floatValue();
-                                        foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                                        String entryDateTime = (String) foodData.get("dateTime");
+                                        String entryDate = entryDateTime.split(" ")[0];
+                                        if (entryDate.equals(targetDate)) {
+                                            String name = (String) foodData.get("foodName");
+                                            float amount = ((Number) foodData.get("calories")).floatValue();
+                                            foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                                        }
                                     }
                                 } else if (value instanceof String) {
                                     // Handle the old format (String)
@@ -208,18 +255,18 @@ public class Journal_entry extends AppCompatActivity {
         }
     }
 
-
-    private void loadSavedBreakfastData() {
-        loadSavedDataByMealType("Breakfast", foodListBreakfast, listViewBreakfast);
+    private void loadSavedBreakfastData(String targetDate) {
+        loadSavedDataByMealType("Breakfast", foodListBreakfast, listViewBreakfast, targetDate);
     }
 
-    private void loadSavedLunchData() {
-        loadSavedDataByMealType("Lunch", foodListLunch, listViewLunch);
+    private void loadSavedLunchData(String targetDate) {
+        loadSavedDataByMealType("Lunch", foodListLunch, listViewLunch, targetDate);
     }
 
-    private void loadSavedDinnerData() {
-        loadSavedDataByMealType("Dinner", foodListDinner, listViewDinner);
+    private void loadSavedDinnerData(String targetDate) {
+        loadSavedDataByMealType("Dinner", foodListDinner, listViewDinner, targetDate);
     }
+
 }
 
 
