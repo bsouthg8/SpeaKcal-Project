@@ -29,7 +29,7 @@ public class UserDatabaseManagement {
     //reward
 
     //done
-    public static void addCalorieToUser(Context context, String foodName, float calories, String mealType) {
+    public static void addCalorieToUser(Context context, String foodName, float calories, String mealType, String targetDate) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
@@ -41,7 +41,8 @@ public class UserDatabaseManagement {
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
-            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour, minute, second);
+            String currentTime = String.format("%02d-%02d-%02d", hour, minute, second);
+            String dateTime = targetDate + " " + currentTime;
 
             // Create a new Map to store the new meal entry
             Map<String, Object> mealData = new HashMap<>();

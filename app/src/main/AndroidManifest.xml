@@ -68,7 +68,8 @@
             android:exported="true"></activity>
         <activity
             android:name=".Journal_entry"
-            android:exported="true"></activity>
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

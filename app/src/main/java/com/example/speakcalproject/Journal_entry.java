@@ -33,6 +33,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,20 +51,21 @@ public class Journal_entry extends AppCompatActivity {
     EditText editTextBreakfast, editTextLunch, editTextDinner;
     FirebaseFirestore db;
     CollectionReference foodRef;
-
     ArrayList<Pair<String, String>> foodListBreakfast = new ArrayList<>();
     ArrayList<Pair<String, String>> foodListLunch = new ArrayList<>();
     ArrayList<Pair<String, String>> foodListDinner = new ArrayList<>();
+
+    private String targetDate;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dailylog);
+        targetDate = dateFormat.format(new Date());
 
         // Bottom navigation
         setupBottomNav();
-
-        // Currently it is saving the data to the wrong collection, but we can fix that next sprint.
 
         // Initialize the Firestore database
         db = FirebaseFirestore.getInstance();
@@ -85,33 +87,33 @@ public class Journal_entry extends AppCompatActivity {
         editTextDinner = findViewById(R.id.editText3_ID);
 
         // Set button onClick listeners
-        buttonBreakfast.setOnClickListener(v -> handleButtonClick(editTextBreakfast, foodListBreakfast, listViewBreakfast, "Breakfast"));
-        buttonLunch.setOnClickListener(v -> handleButtonClick(editTextLunch, foodListLunch, listViewLunch, "Lunch"));
-        buttonDinner.setOnClickListener(v -> handleButtonClick(editTextDinner, foodListDinner, listViewDinner, "Dinner"));
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        final String[] targetDate = {dateFormat.format(new Date())};
+        buttonBreakfast.setOnClickListener(v -> handleButtonClick(editTextBreakfast, foodListBreakfast, listViewBreakfast, "Breakfast", targetDate));
+        buttonLunch.setOnClickListener(v -> handleButtonClick(editTextLunch, foodListLunch, listViewLunch, "Lunch", targetDate));
+        buttonDinner.setOnClickListener(v -> handleButtonClick(editTextDinner, foodListDinner, listViewDinner, "Dinner", targetDate));
 
         // Load initial data
-        loadSavedBreakfastData(targetDate[0]);
-        loadSavedLunchData(targetDate[0]);
-        loadSavedDinnerData(targetDate[0]);
+        loadSavedBreakfastData(targetDate);
+        loadSavedLunchData(targetDate);
+        loadSavedDinnerData(targetDate);
 
+        TextView currentDateTextView = findViewById(R.id.currentDateTextView);
+        currentDateTextView.setText(targetDate);
         Button prevButton = findViewById(R.id.prevButton);
         Button nextButton = findViewById(R.id.nextButton);
 
         prevButton.setOnClickListener(v -> {
             try {
-                Date date = dateFormat.parse(targetDate[0]);
+                Date date = dateFormat.parse(targetDate);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(date);
                 cal.add(Calendar.DATE, -1);
-                targetDate[0] = dateFormat.format(cal.getTime());
+                targetDate = dateFormat.format(cal.getTime());
 
                 // Reload data
-                loadSavedBreakfastData(targetDate[0]);
-                loadSavedLunchData(targetDate[0]);
-                loadSavedDinnerData(targetDate[0]);
+                loadSavedBreakfastData(targetDate);
+                loadSavedLunchData(targetDate);
+                loadSavedDinnerData(targetDate);
+                currentDateTextView.setText(targetDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -119,16 +121,17 @@ public class Journal_entry extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             try {
-                Date date = dateFormat.parse(targetDate[0]);
+                Date date = dateFormat.parse(targetDate);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(date);
                 cal.add(Calendar.DATE, 1);
-                targetDate[0] = dateFormat.format(cal.getTime());
+                targetDate = dateFormat.format(cal.getTime());
 
                 // Reload data
-                loadSavedBreakfastData(targetDate[0]);
-                loadSavedLunchData(targetDate[0]);
-                loadSavedDinnerData(targetDate[0]);
+                loadSavedBreakfastData(targetDate);
+                loadSavedLunchData(targetDate);
+                loadSavedDinnerData(targetDate);
+                currentDateTextView.setText(targetDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -162,7 +165,7 @@ public class Journal_entry extends AppCompatActivity {
         });
     }
 
-    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType) {
+    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType, String targetDate) {
         String userInput = editText.getText().toString();
 
         if (!userInput.isEmpty()) {
@@ -176,7 +179,7 @@ public class Journal_entry extends AppCompatActivity {
                             float calorieAmount = Float.parseFloat(amount);
 
                             // Save the food entry to Firestore for the user
-                            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), name, calorieAmount, mealType);
+                            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), name, calorieAmount, mealType, targetDate);
                         }
                     }
                     updateListView(foodList, listView);
@@ -217,6 +220,9 @@ public class Journal_entry extends AppCompatActivity {
 
 
     private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView, String targetDate) {
+        // Clear the list first
+        foodList.clear();
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String userID = currentUser.getUid();

@@ -28,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class PhotoRecognition extends AppCompatActivity {
@@ -41,14 +43,15 @@ public class PhotoRecognition extends AppCompatActivity {
     private Button backToMainPage;
     private String foodName;
     private FirebaseFirestore ff;
-
-    private int mCurrentSelectedItemId = R.id.navigation_photo;
+    private String targetDate;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle("Photo Recognition");
         setContentView(R.layout.activity_photo_recognition);
+        targetDate = dateFormat.format(new Date());
 
         // backToMainPage = findViewById((R.id.button4));
         camera = findViewById(R.id.button);
@@ -320,7 +323,7 @@ public class PhotoRecognition extends AppCompatActivity {
         builder.setItems(mealTypes, (dialog, which) -> {
             String selectedMealType = mealTypes[which];
             // Call the addCalorieToUser method with the selectedMealType
-            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodInfo.getFoodName(), foodInfo.getCalories(), selectedMealType);
+            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodInfo.getFoodName(), foodInfo.getCalories(), selectedMealType, targetDate);
         });
 
         AlertDialog dialog = builder.create();

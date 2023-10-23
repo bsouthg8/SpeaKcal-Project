@@ -6,6 +6,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Journal_entry">
 
+    <TextView
+        android:id="@+id/currentDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="28dp"
+        android:padding="10dp"
+        android:text="Date goes here"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/prevButton"
         android:layout_width="wrap_content"
@@ -47,7 +62,6 @@
         android:id="@+id/button_ID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="137dp"
         android:layout_marginEnd="12dp"
         android:text="Add Food"
@@ -71,7 +85,7 @@
 
     <EditText
         android:id="@+id/editText_ID"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="140dp"
         android:layout_marginEnd="9dp"
@@ -87,10 +101,9 @@
         android:id="@+id/button2_ID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="4dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         android:text="Add Food"
         app:layout_constraintBottom_toTopOf="@+id/list2_ID"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,7 +124,7 @@
 
     <EditText
         android:id="@+id/editText2_ID"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="33dp"
         android:layout_marginEnd="4dp"
@@ -126,9 +139,8 @@
         android:id="@+id/button3_ID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="19dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="12dp"
         android:text="Add Food"
         app:layout_constraintBottom_toTopOf="@+id/list3_ID"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,7 +160,7 @@
 
     <EditText
         android:id="@+id/editText3_ID"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="34dp"
         android:layout_marginBottom="3dp"
