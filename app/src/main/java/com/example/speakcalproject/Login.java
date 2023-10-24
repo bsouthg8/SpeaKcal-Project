@@ -18,9 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Login extends AppCompatActivity {
 
-    private EditText usernameEditText, passwordEditText;
+    EditText usernameEditText;
+    private EditText passwordEditText;
     private Button login_button;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     @Override
@@ -58,7 +59,7 @@ public class Login extends AppCompatActivity {
 
 
     //When MainActivity finished, change intent to MainActivity
-    public void loginUser(String userName, String passWord){
+    public boolean loginUser(String userName, String passWord){
         mAuth.signInWithEmailAndPassword(userName+"@example.com",passWord).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -75,5 +76,6 @@ public class Login extends AppCompatActivity {
 
             }
         });
+        return false;
     }
 }
