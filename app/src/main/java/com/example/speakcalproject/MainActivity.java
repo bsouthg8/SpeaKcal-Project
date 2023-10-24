@@ -2,6 +2,7 @@ package com.example.speakcalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,14 +29,15 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    public UserDatabaseManagement userDatabaseManagement;
     private TextView textView;
     private ImageView imageView;
     private String userName;
-    private Map<String, Object> userInfo;
+    Map<String, Object> userInfo;
     private PieChart pieChart1;
-    private CircularProgressBar progressBar;
-    private double limitedCalories;
-    private double totalCalories;
+    CircularProgressBar progressBar;
+    double limitedCalories;
+    double totalCalories;
     private int mCurrentSelectedItemId = R.id.navigation_home; // default item
     FirebaseFirestore firestore;
 
@@ -221,4 +223,6 @@ public class MainActivity extends AppCompatActivity {
         float progress = (float) ((totalCalories/limitedCalories)*100);
         progressBar.setProgress(progress,String.valueOf(totalCalories),limitedCalories);
     }
+
+
 }

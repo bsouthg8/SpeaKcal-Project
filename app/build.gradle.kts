@@ -66,4 +66,10 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.work:work-runtime:2.8.1")
+    // AndroidX Test - Instrumentation Testing
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    testImplementation ("org.robolectric:robolectric:4.6.1")
+    testImplementation ("org.mockito:mockito-core:3.12.4")
+
+
 }

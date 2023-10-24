@@ -109,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void saveProfileData() {
+    void saveProfileData() {
         String name = editTextName.getText().toString();
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
