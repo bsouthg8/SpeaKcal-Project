@@ -70,7 +70,8 @@ dependencies {
     implementation("androidx.work:work-runtime:2.8.1")
 
     // Required -- JUnit 4 framework
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation("junit:junit:4.13.1")
+
     // Optional -- Mockito framework
-    testImplementation 'org.mockito:mockito-core:2.28.2'
+    testImplementation("org.mockito:mockito-core:2.28.2")
 }
