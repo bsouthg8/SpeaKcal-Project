@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpeaKcalProject</string>
+    <string name="app_name">SpeaKcal</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -9,8 +9,8 @@
     <string name="title_photorecognition">Photo Rec.</string>
     <string name="title_journal">Journal</string>
     <string-array name="food_categories">
-        <item>breakfast</item>
-        <item>lunch</item>
-        <item>dinner</item>
+        <item>Breakfast</item>
+        <item>Lunch</item>
+        <item>Dinner</item>
     </string-array>
 </resources>

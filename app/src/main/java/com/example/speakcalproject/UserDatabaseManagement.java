@@ -1,6 +1,7 @@
 package com.example.speakcalproject;
 
 import android.content.Context;
+import android.util.Pair;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
 
+    //This is used to add journal entries to the database
     //add user database "User"
     //User structure:
     //username
@@ -78,7 +80,68 @@ public class UserDatabaseManagement {
         }
     }
 
+    public static void updateFoodEntry(Context context, Pair<String, String> clickedFood, String mealType, String dateTime) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
 
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists() && document.get("Food") != null) {
+                        Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
+                        Map<String, Object> mealData = (Map<String, Object>) existingFoodData.get(dateTime);
+
+                        if (mealData != null) {
+                            // Update the entry with new details
+                            mealData.put("foodName", clickedFood.first);
+                            mealData.put("calories", Float.parseFloat(clickedFood.second));
+                            existingFoodData.put(dateTime, mealData);
+
+                            // Update the document with the modified food data
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error updating food in database", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                } else {
+                    // Handle failure
+                }
+            });
+        }
+    }
+
+    public static void removeFoodEntry(Context context, Pair<String, String> clickedFood, String mealType, String dateTime) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists() && document.get("Food") != null) {
+                        Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
+
+                        // If the dateTime matches, then remove that entry
+                        if (existingFoodData.containsKey(dateTime)) {
+                            existingFoodData.remove(dateTime);
+
+                            // Update the document with the modified food data
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error deleting food from database", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                } else {
+                    // Handle failure
+                }
+            });
+        }
+    }
 
     //When need to retrieve user data
     //user method like below:

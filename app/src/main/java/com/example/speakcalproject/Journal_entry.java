@@ -2,6 +2,7 @@ package com.example.speakcalproject;
 
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +92,21 @@ public class Journal_entry extends AppCompatActivity {
         buttonBreakfast.setOnClickListener(v -> handleButtonClick(editTextBreakfast, foodListBreakfast, listViewBreakfast, "Breakfast", targetDate));
         buttonLunch.setOnClickListener(v -> handleButtonClick(editTextLunch, foodListLunch, listViewLunch, "Lunch", targetDate));
         buttonDinner.setOnClickListener(v -> handleButtonClick(editTextDinner, foodListDinner, listViewDinner, "Dinner", targetDate));
+
+        // Set List View onClick listeners
+        listViewBreakfast.setOnItemClickListener((parent, view, position, id) -> {
+            Pair<String, String> clickedFood = foodListBreakfast.get(position);
+            showFoodDetailsDialog(clickedFood, foodListBreakfast, listViewBreakfast, "Breakfast");
+        });
+        listViewLunch.setOnItemClickListener((parent, view, position, id) -> {
+            Pair<String, String> clickedFood = foodListLunch.get(position);
+            showFoodDetailsDialog(clickedFood, foodListLunch, listViewLunch, "Lunch");
+        });
+        listViewDinner.setOnItemClickListener((parent, view, position, id) -> {
+            Pair<String, String> clickedFood = foodListDinner.get(position);
+            showFoodDetailsDialog(clickedFood, foodListDinner, listViewDinner, "Dinner");
+        });
+
 
         // Load initial data
         loadSavedBreakfastData(targetDate);
@@ -218,6 +235,64 @@ public class Journal_entry extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+    private void showFoodDetailsDialog(Pair<String, String> clickedFood, List<Pair<String, String>> foodList, ListView listView, String mealType, String dateTime) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Inflate the dialog_edit_entry XML layout
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_entry, null);
+        builder.setView(dialogView);
+
+        // Populate the EditTexts with the clicked food's data
+        EditText editFoodName = dialogView.findViewById(R.id.editFoodName);
+        EditText editCalories = dialogView.findViewById(R.id.editCalories);
+        Spinner spinnerMealType = dialogView.findViewById(R.id.spinnerMealType);
+        Button btnSave = dialogView.findViewById(R.id.btnSave);
+        Button btnDelete = dialogView.findViewById(R.id.btnDelete);
+
+        editFoodName.setText(clickedFood.first);
+        editCalories.setText(clickedFood.second);
+
+        // Setup spinner
+        String[] foodCategories = getResources().getStringArray(R.array.food_categories);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, foodCategories);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMealType.setAdapter(spinnerAdapter);
+        spinnerMealType.setSelection(spinnerAdapter.getPosition(mealType));
+
+        // Handle the Save button click
+        btnSave.setOnClickListener(v -> {
+            String newFoodName = editFoodName.getText().toString();
+            String newCalories = editCalories.getText().toString();
+
+            // Update the clickedFood details and update the database
+            clickedFood = new Pair<>(newFoodName, newCalories);
+            UserDatabaseManagement.updateFoodEntry(this, clickedFood, mealType, dateTime);
+
+            // Refresh the ListView
+            ArrayAdapter<Pair<String, String>> adapter = (ArrayAdapter<Pair<String, String>>) listView.getAdapter();
+            adapter.notifyDataSetChanged();
+
+            Toast.makeText(this, "Entry updated", Toast.LENGTH_SHORT).show();
+        });
+
+        // Handle the Delete button click
+        btnDelete.setOnClickListener(v -> {
+            // Remove the clickedFood from the list and the database
+            foodList.remove(clickedFood);
+            UserDatabaseManagement.removeFoodEntry(this, clickedFood, mealType, dateTime);
+
+            // Refresh the ListView
+            ArrayAdapter<Pair<String, String>> adapter = (ArrayAdapter<Pair<String, String>>) listView.getAdapter();
+            adapter.notifyDataSetChanged();
+
+            Toast.makeText(this, "Entry deleted", Toast.LENGTH_SHORT).show();
+        });
+
+
+        // Display the dialog
+        builder.create().show();
+    }
 
     private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView, String targetDate) {
         // Clear the list first
