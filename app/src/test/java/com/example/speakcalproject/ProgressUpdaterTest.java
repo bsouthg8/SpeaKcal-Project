@@ -23,6 +23,16 @@ public class ProgressUpdaterTest {
         assertEquals(25.0f, progress, 0.01); // 25% progress
     }
 
+    @Test
+    public void testWeeklyCalculateProgress() {
+        double totalCalories = 7000.0;
+        double limitedCalories = 2000.0;
+
+        float progress = progressUpdater.calculateWeeklyProgress(totalCalories, limitedCalories);
+
+        assertEquals(50.0f, progress, 0.01); // 25% progress
+    }
+
 //    @Test
 //    public void testCalculateProgressFailure() {
 //        double totalCalories = 500.0;
