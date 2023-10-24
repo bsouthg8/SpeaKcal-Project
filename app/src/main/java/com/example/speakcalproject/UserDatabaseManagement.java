@@ -1,7 +1,11 @@
 package com.example.speakcalproject;
 
 import android.content.Context;
+import android.util.Pair;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -19,7 +23,7 @@ public class UserDatabaseManagement {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference userCollection = db.collection("users");
 
-
+    //This is used to add journal entries to the database
     //add user database "User"
     //User structure:
     //username
@@ -27,55 +31,126 @@ public class UserDatabaseManagement {
     //reward
 
     //done
-    public static void addCalorieToUser(Context context, String foodName, float calories) {
+    public static void addCalorieToUser(Context context, String foodName, float calories, String mealType, String targetDate) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH)+1;
+            int month = calendar.get(Calendar.MONTH) + 1;
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
-            String dateTime = String.format("%04d-%02d-%02d %02d-%02d-%02d", year, month, day, hour,minute,second);
+            String currentTime = String.format("%02d-%02d-%02d", hour, minute, second);
+            String dateTime = targetDate + " " + currentTime;
+
+            // Create a new Map to store the new meal entry
+            Map<String, Object> mealData = new HashMap<>();
+            mealData.put("dateTime", dateTime);
+            mealData.put("foodName", foodName);
+            mealData.put("calories", calories);
+            mealData.put("mealType", mealType);
 
             db.collection("users").document(userID).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    Map<String, Object> existingFoodData;  // Declare outside of the if-else block
                     if(document.exists()) {
                         if(document.get("Food") != null) {
-                            Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
-                            existingFoodData.put(dateTime,foodName+", "+calories);
-
-                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
-                            });
+                            existingFoodData = (Map<String, Object>) document.get("Food");
+                            existingFoodData.put(dateTime, mealData);
                         } else {
-                            Map<String, Object> existingFoodData = new HashMap<>();
-                            existingFoodData.put(dateTime,foodName+", "+calories);
-
-                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add food to database", Toast.LENGTH_SHORT).show();
-                            });
-
+                            existingFoodData = new HashMap<>();
+                            existingFoodData.put(dateTime, mealData);
                         }
 
+                        // Now existingFoodData is accessible here
+                        db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                            Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(context, "Error adding food to database", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 } else {
-
+                    // Handle failure
                 }
             });
+        }
+    }
 
+    public static void updateFoodEntry(Context context, FoodEntry clickedFood, String mealType, String dateTime) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if(clickedFood.getFoodName() == null || clickedFood.getFoodName().isEmpty()) {
+            Toast.makeText(context, "DateTime is invalid", Toast.LENGTH_SHORT).show();
+            return;
         }
 
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists() && document.get("Food") != null) {
+                        Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
+                        Map<String, Object> mealData = (Map<String, Object>) existingFoodData.get(dateTime);
+
+                        if (mealData != null) {
+                            // Update the entry with new details
+                            mealData.put("foodName", clickedFood.getFoodName());
+                            mealData.put("calories", clickedFood.getCalories());
+                            existingFoodData.put(dateTime, mealData);
+
+                            // Update the document with the modified food data
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error updating food in database", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                } else {
+                    // Handle failure
+                    Toast.makeText(context, "Error fetching data from database", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
+
+    public static void removeFoodEntry(Context context, FoodEntry clickedFood, String mealType, String dateTime) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists() && document.get("Food") != null) {
+                        Map<String, Object> existingFoodData = (Map<String, Object>) document.get("Food");
+
+                        // If the dateTime matches, then remove that entry
+                        if (existingFoodData.containsKey(dateTime)) {
+                            existingFoodData.remove(dateTime);
+
+                            // Update the document with the modified food data
+                            db.collection("users").document(userID).update("Food", existingFoodData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error deleting food from database", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                } else {
+                    // Handle failure
+                    Toast.makeText(context, "Error fetching data from database", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 
     //When need to retrieve user data
     //user method like below:
@@ -86,7 +161,9 @@ public class UserDatabaseManagement {
     //}
     //});
     //done
-    public static void getUserData(Context context, OnUserDataCallback callback){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void getUserData(Context context, OnUserDataCallback callback, int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
 
@@ -96,29 +173,76 @@ public class UserDatabaseManagement {
                 if(document.exists()) {
                     Map<String, Object> userData = (Map<String, Object>) document.getData();
                     callback.onUserDataReceived(userData);
-                    Toast.makeText(context,"User data retrieved successfully",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data retrieved successfully", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context,"User data does not exist",Toast.LENGTH_SHORT).show();
+                    if(status == 2) {
+                        Toast.makeText(context, "User data does not exist", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
-                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show();
+                if(status == 2) {
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void updateLimitation(Context context, double newLimitation, int status) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("calories limitation") != null) {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(e -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            db.collection("users").document(userID).update("calories limitation", newLimitation).addOnSuccessListener(aVoid -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "calories limitation updated successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(e -> {
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                } else {
+
+                }
+            });
+        }
     }
     //done
     public interface  OnUserDataCallback {
         void onUserDataReceived(Map<String, Object> userData);
     }
-    //done
-    public static void addRewardToUser(Context context, String reward){
+    //status 1 not show toast
+    //status 2 shows toast
+    public static void addRewardToUser(Context context, String reward,int status){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
             String userID = currentUser.getUid();
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH)+1;
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
@@ -133,18 +257,26 @@ public class UserDatabaseManagement {
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
                         } else {
                             Map<String, Object> existingRewardData = new HashMap<>();
                             existingRewardData.put(dateTime, reward);
 
                             db.collection("users").document(userID).update("reward", existingRewardData).addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Reward added successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                if(status == 2) {
+                                    Toast.makeText(context, "Error add reward to database", Toast.LENGTH_SHORT).show();
+                                }
                             });
 
                         }
@@ -160,32 +292,90 @@ public class UserDatabaseManagement {
 
     }
 
-    public static double calculateCaloriesForDate(Map<String,Object>data,String targetDate) throws ParseException {
+    public static void addWeeklyRewardStatus(Context context, String targetWeek){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            String userID = currentUser.getUid();
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+
+            db.collection("users").document(userID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        if(document.get("weekly reward") != null) {
+                            Map<String, Boolean> existingRewardData = (Map<String, Boolean>) document.get("weekly reward");
+                            existingRewardData.put(targetWeek+" "+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            Map<String, Boolean> existingRewardData = new HashMap<>();
+                            existingRewardData.put(targetWeek+" "+year, true);
+
+                            db.collection("users").document(userID).update("weekly reward", existingRewardData).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(context, "Reward status added successfully", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(context, "Error add reward status to database", Toast.LENGTH_SHORT).show();
+                            });
+
+                        }
+
+                    }
+                } else {
+
+                }
+            });
+
+
+        }
+
+    }
+
+    public static double calculateCaloriesForDate(@NonNull Map<String, Object> data, String targetDate) throws ParseException {
         double totalCalories = 0.0;
 
-        for(Map.Entry<String, Object> entry : data.entrySet()){
-            String dateTimeStr = entry.getKey();
-            String foodInfo = entry.getValue().toString();
-            dateTimeStr = dateTimeStr.split(" ")[0];
-            dateTimeStr.replace("\"","");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String dateTimeStr = entry.getKey();
+            dateTimeStr = dateTimeStr.split(" ")[0];
+            dateTimeStr.replace("\"", "");
+
             Date date = dateFormat.parse(dateTimeStr);
             String currentDate = dateFormat.format(date);
 
-            if(currentDate.equals(targetDate)) {
-                String[] parts = foodInfo.split(", ");
-                if(parts.length == 2) {
+            if (currentDate.equals(targetDate)) {
+                Object foodInfoObj = entry.getValue();
+
+                if (foodInfoObj instanceof String) {
+                    // Handling old data format
+                    String foodInfo = foodInfoObj.toString();
+                    String[] parts = foodInfo.split(", ");
+                    if (parts.length >= 2) {
+                        try {
+                            double calories = Double.parseDouble(parts[1]);
+                            totalCalories += calories;
+                        } catch (NumberFormatException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else if (foodInfoObj instanceof Map) {
+                    // Handling new data format
+                    Map<String, Object> foodInfo = (Map<String, Object>) foodInfoObj;
                     try {
-                        double calories = Double.parseDouble(parts[1]);
+                        double calories = (double) foodInfo.get("calories");
                         totalCalories += calories;
-                    } catch (NumberFormatException e) {
-                        throw new RuntimeException(e);
+                    } catch (ClassCastException e) {
+                        throw new RuntimeException("Invalid data type for calories", e);
                     }
                 }
             }
         }
-
         return totalCalories;
     }
 }

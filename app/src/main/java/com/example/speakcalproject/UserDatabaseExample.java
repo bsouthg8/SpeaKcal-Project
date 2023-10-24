@@ -1,25 +1,22 @@
 package com.example.speakcalproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class UserDatabaseExample extends AppCompatActivity {
     private Button add,delete,get,addCalorie,addReward;
     private EditText nameInput, passwordInput,foodNameInput,calorieInput,rewardInput;
     private TextView infoOutput;
-
+    private String targetDate;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +33,14 @@ public class UserDatabaseExample extends AppCompatActivity {
         infoOutput = findViewById(R.id.userInfoTextView);
         addReward = findViewById(R.id.addRewardToDatabase);
         rewardInput = findViewById(R.id.editReward);
+        targetDate = dateFormat.format(new Date());
+        String mealTypeTest = "Breakfast";
 
         addReward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String reward = rewardInput.getText().toString();
-                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward);
+                UserDatabaseManagement.addRewardToUser(UserDatabaseExample.this,reward,1);
             }
         });
 
@@ -74,7 +73,7 @@ public class UserDatabaseExample extends AppCompatActivity {
                             String userDataString = userDataText.toString();
                             infoOutput.setText(userDataString);
                         }
-                    });
+                    },1);
 
             }
         });
@@ -83,7 +82,7 @@ public class UserDatabaseExample extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!nameInput.getText().toString().isEmpty() && !foodNameInput.getText().toString().isEmpty() && !calorieInput.getText().toString().isEmpty()) {
-                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()));
+                    UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodNameInput.getText().toString(), Float.parseFloat(calorieInput.getText().toString()), mealTypeTest, targetDate);
                 }
             }
         });

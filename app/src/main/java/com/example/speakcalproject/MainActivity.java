@@ -2,38 +2,21 @@ package com.example.speakcalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.speakcalproject.databinding.ActivityMainBinding;
-import com.google.android.material.slider.LabelFormatter;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,17 +29,16 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    public UserDatabaseManagement userDatabaseManagement;
     private TextView textView;
     private ImageView imageView;
     private String userName;
-    private Map<String, Object> userInfo;
-    private PieChart pieChart;
+    Map<String, Object> userInfo;
     private PieChart pieChart1;
-    private double limitedCalories;
-
-
+    CircularProgressBar progressBar;
+    double limitedCalories;
+    double totalCalories;
     private int mCurrentSelectedItemId = R.id.navigation_home; // default item
-
     FirebaseFirestore firestore;
 
 
@@ -66,61 +48,44 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
 
+        int count = getIntent().getIntExtra("count",0);
+
+        //show achievement
+        if(count != 0){
+            LayoutInflater inflater = getLayoutInflater();
+            View customToastView = inflater.inflate(R.layout.custom_goldmedal_layout,null);
+            ImageView medalImageView = customToastView.findViewById(R.id.medal);
+            Toast customToast = new Toast(getApplicationContext());
+            customToast.setDuration(Toast.LENGTH_SHORT);
+            customToast.setView(customToastView);
+            customToast.show();
+        }
+
         // Bottom navigation
         setupBottomNav();
 
-        imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
-        pieChart = findViewById(R.id.pieChart1);
         pieChart1 = findViewById(R.id.pieChart2);
+        progressBar = findViewById(R.id.progressBar);
 
-        //waiting for further modification
-        limitedCalories = 2500;
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedCurrentDate = dateFormat.format(currentDate);
 
+        //change this part below too
         UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
             @Override
             public void onUserDataReceived(Map<String, Object> userData) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setGlobalData((HashMap<String, Object>) userData);
+
                 userInfo = userData;
                 userName = (String) userData.get("username");
-                textView.setText("Welcome back\n"+userName);
+                textView.setText("Welcome back\n" + userName);
+                limitedCalories = (Double) userData.get("calories limitation");
 
                 try {
-                    Double totalCalories = getCurrentDaysCalories();
-                    List<PieEntry> entries = new ArrayList<>();
-                    if(totalCalories >= limitedCalories){
-                        totalCalories = limitedCalories;
-                    }
-
-                    double totalPercentage = ((limitedCalories - totalCalories) / limitedCalories) * 100;
-                    entries.add(new PieEntry(new Float(totalCalories/limitedCalories) * 100,"Taken"));
-                    //just testing now
-                    entries.add(new PieEntry(new Float(totalPercentage),"Left"));
-
-                    PieDataSet dataSet = new PieDataSet(entries,"Total Calories");
-                    dataSet.setValueTextSize(20f);
-                    ArrayList<Integer> colors = new ArrayList<>();
-                    colors.add(getResources().getColor(R.color.colorYellow));
-                    colors.add(getResources().getColor(R.color.colorGrey));
-                    dataSet.setColors(colors);
-
-                    PieData data = new PieData(dataSet);
-                    pieChart.setData(data);
-
-                    pieChart.setDrawHoleEnabled(true);
-                    pieChart.setHoleColor(android.R.color.transparent);
-                    pieChart.setDrawEntryLabels(false);
-                    pieChart.getDescription().setEnabled(false);
-
-                    Calendar calendar = Calendar.getInstance();
-                    Date currentDate = calendar.getTime();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String formattedCurrentDate = dateFormat.format(currentDate);
-                    String centerText = "Today \n %";
-                    pieChart.setCenterText(centerText);
-                    pieChart.setCenterTextSize(20f);
-                    pieChart.setCenterTextColor(R.color.black);
-
-                    pieChart.invalidate();
 
                     //Past 7 days Calculation
                     Double pastTotalCalories = getTotalCaloriesForLast7Days();
@@ -157,13 +122,43 @@ public class MainActivity extends AppCompatActivity {
                     pieChart1.setCenterTextColor(R.color.black);
 
                     pieChart1.invalidate();
+                    totalCalories = getCurrentDaysCalories(formattedCurrentDate);
+                    updateProgress(getCurrentFocus());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
 
             }
-        });
+        },2);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedCurrentDate = dateFormat.format(currentDate);
+
+        UserDatabaseManagement.getUserData(getApplicationContext(), new UserDatabaseManagement.OnUserDataCallback() {
+            @Override
+            public void onUserDataReceived(Map<String, Object> userData) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setGlobalData((HashMap<String, Object>) userData);
+                userInfo = userData;
+                userName = (String) userData.get("username");
+                textView.setText("Welcome back\n"+userName);
+
+                try {
+                    totalCalories = getCurrentDaysCalories(formattedCurrentDate);
+                    updateProgress(getCurrentFocus());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        },1);
     }
 
     private void setupBottomNav() {
@@ -193,17 +188,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public Double getCurrentDaysCalories() throws ParseException{
+    public Double getCurrentDaysCalories(String targetDate) throws ParseException{
         Double totalCalories = 0.0;
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String formattedCurrentDate = dateFormat.format(currentDate);
-
 
         if (userInfo.get("Food") != null) {
             Map<String, Object> userFoodInfo = (Map<String, Object>) userInfo.get("Food");
-            totalCalories = UserDatabaseManagement.calculateCaloriesForDate(userFoodInfo,formattedCurrentDate);
+            totalCalories = UserDatabaseManagement.calculateCaloriesForDate(userFoodInfo,targetDate);
         }
 
         return totalCalories;
@@ -228,5 +218,11 @@ public class MainActivity extends AppCompatActivity {
 
         return totalCalories;
     }
+
+    public void updateProgress(View view){
+        float progress = (float) ((totalCalories/limitedCalories)*100);
+        progressBar.setProgress(progress,String.valueOf(totalCalories),limitedCalories);
+    }
+
 
 }

@@ -21,21 +21,15 @@ import android.widget.TextView;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.widget.Toast;
-import com.example.speakcalproject.R;
-
 import com.example.speakcalproject.ml.LiteModelAiyVisionClassifierFoodV11;
-import com.example.speakcalproject.ui.dashboard.DashboardFragment;
-import com.example.speakcalproject.ui.home.HomeFragment;
-import com.example.speakcalproject.ui.home.HomeViewModel;
-import com.example.speakcalproject.ui.notifications.NotificationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
-
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class PhotoRecognition extends AppCompatActivity {
@@ -49,14 +43,15 @@ public class PhotoRecognition extends AppCompatActivity {
     private Button backToMainPage;
     private String foodName;
     private FirebaseFirestore ff;
-
-    private int mCurrentSelectedItemId = R.id.navigation_photo;
+    private String targetDate;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle("Photo Recognition");
         setContentView(R.layout.activity_photo_recognition);
+        targetDate = dateFormat.format(new Date());
 
         // backToMainPage = findViewById((R.id.button4));
         camera = findViewById(R.id.button);
@@ -158,7 +153,9 @@ public class PhotoRecognition extends AppCompatActivity {
                 foodCalories = Float.parseFloat(data.getStringExtra("result"));
                 foodInfo.setCalories(foodInfo.getFoodWeight()*foodCalories/100.0f);
                 result.setText("Item: "+foodInfo.getFoodName()+"\nWeight: "+foodInfo.getFoodWeight()+"\nCalories: "+foodInfo.getCalories());
-                UserDatabaseManagement.addCalorieToUser(getApplicationContext(),foodInfo.getFoodName(),foodInfo.getCalories());
+
+                // Show the dialog for the user to select a MealType
+                showMealTypeDialog();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -318,5 +315,19 @@ public class PhotoRecognition extends AppCompatActivity {
         startActivityForResult(intent,2);
     }
 
+    private void showMealTypeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Meal Type");
+
+        String[] mealTypes = {"Breakfast", "Lunch", "Dinner"};
+        builder.setItems(mealTypes, (dialog, which) -> {
+            String selectedMealType = mealTypes[which];
+            // Call the addCalorieToUser method with the selectedMealType
+            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), foodInfo.getFoodName(), foodInfo.getCalories(), selectedMealType, targetDate);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 }

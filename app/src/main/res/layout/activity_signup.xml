@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundimage"
     android:orientation="vertical"
     android:padding="48dp"
     tools:context=".Signup">
@@ -33,6 +34,15 @@
         android:layout_height="wrap_content"
         android:hint="Re-enter Password"
         android:inputType="textPassword"
+        android:textSize="21sp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/caloriesLimitation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Daily Calories Limitation"
+        android:inputType="number"
         android:textSize="21sp"
         android:textStyle="bold"/>
 

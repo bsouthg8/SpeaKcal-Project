@@ -22,8 +22,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +58,9 @@ public class DatabaseManagementActivity extends AppCompatActivity {
         backToMainPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(DatabaseManagementActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
 
             }
         });

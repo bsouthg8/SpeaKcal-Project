@@ -24,7 +24,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class SpeechToTextFragment extends Fragment {
@@ -45,8 +48,8 @@ public class SpeechToTextFragment extends Fragment {
         speakButton.setOnClickListener(v -> {
             // Create an AlertDialog to show the instructions
             new AlertDialog.Builder(getContext())
-                    .setTitle("Instructions")
-                    .setMessage("Please format your speech as: 'breakfast: ...', 'lunch: ...' or 'dinner: ...'.")
+                    .setTitle("Speech Entry Instructions")
+                    .setMessage("Please format your sentence starting with: 'Breakfast: ...', 'Lunch: ...' or 'Dinner: ...' for easier categorisation")
                     .setPositiveButton("OK", (dialog, which) -> {
                         // Start the speech recognition after pressing OK
                         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -76,11 +79,11 @@ public class SpeechToTextFragment extends Fragment {
             // Determine the category based on the original recognized text
             String category = "unknown";  // Default category
             if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("breakfast")) {
-                category = "breakfast";
+                category = "Breakfast";
             } else if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("lunch")) {
-                category = "lunch";
+                category = "Lunch";
             } else if (data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0).toLowerCase().contains("dinner")) {
-                category = "dinner";
+                category = "Dinner";
             }
 
             // Setup and show the dialog
@@ -104,31 +107,25 @@ public class SpeechToTextFragment extends Fragment {
             EditText editCalories = dialogView.findViewById(R.id.editCalories);
 
             builder.setPositiveButton("Save", (dialog, which) -> {
-                // Save the data to Firestore
+                // Extract values from UI elements
                 String finalCategory = spinnerCategory.getSelectedItem().toString();
                 String finalContent = editRecognizedContent.getText().toString();
                 String caloriesInput = editCalories.getText().toString();
 
-                // Save recognizedText to Firestore
-                Map<String, Object> textEntry = new HashMap<>();
-                textEntry.put("category", finalCategory);
-                textEntry.put("content", finalContent);
-                textEntry.put("calories", caloriesInput);
+                try {
+                    // Convert the caloriesInput String to a float for the addCalorieToUser method
+                    float caloriesValue = Float.parseFloat(caloriesInput);
 
-                firestore.collection("Food").add(textEntry)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(getContext(), "Saved to database under " + finalCategory, Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                    // Save today's date as the targetDate
+                    String targetDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
+                    // Use the addCalorieToUser method from UserDatabaseManagement class
+                    UserDatabaseManagement.addCalorieToUser(getContext(), finalContent, caloriesValue, finalCategory, targetDate);
+
+                    Toast.makeText(getContext(), "Saved to user's database under " + finalCategory, Toast.LENGTH_LONG).show();
+                } catch (NumberFormatException ex) {
+                    Toast.makeText(getContext(), "Invalid calorie input", Toast.LENGTH_SHORT).show();
+                }
             });
             builder.setNegativeButton("Cancel", null);
             builder.show();
