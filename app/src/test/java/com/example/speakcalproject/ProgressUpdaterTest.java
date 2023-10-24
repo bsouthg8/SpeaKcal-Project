@@ -23,13 +23,13 @@ public class ProgressUpdaterTest {
         assertEquals(25.0f, progress, 0.01); // 25% progress
     }
 
-    @Test
-    public void testCalculateProgressFailure() {
-        double totalCalories = 500.0;
-        double limitedCalories = 2000.0;
-
-        float progress = progressUpdater.calculateProgress(totalCalories, limitedCalories);
-
-        assertEquals(75.0f, progress, 0.01); // 25% progress
-    }
+//    @Test
+//    public void testCalculateProgressFailure() {
+//        double totalCalories = 500.0;
+//        double limitedCalories = 2000.0;
+//
+//        float progress = progressUpdater.calculateProgress(totalCalories, limitedCalories);
+//
+//        assertEquals(75.0f, progress, 0.01); // 25% progress
+//    }
 }
