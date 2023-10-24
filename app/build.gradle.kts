@@ -66,4 +66,9 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.work:work-runtime:2.8.1")
+    testImplementation("org.mockito:mockito-core:3.12.4")
+    testImplementation ("org.mockito:mockito-inline:3.12.4")
+    testImplementation ("org.robolectric:robolectric:4.9")
+    // Required -- JUnit 4 framework
+    testImplementation ("junit:junit:4.13.2")
 }
