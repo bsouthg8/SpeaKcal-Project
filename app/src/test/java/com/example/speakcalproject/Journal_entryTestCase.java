@@ -2,6 +2,7 @@ package com.example.speakcalproject;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import android.util.Pair;
@@ -10,8 +11,10 @@ import android.widget.ListView;
 
 import com.example.speakcalproject.Journal_entry;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -20,7 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,14 +54,18 @@ public class JournalEntryTest {
         MockitoAnnotations.initMocks(this);
 
         when(mockFirestore.collection(anyString())).thenReturn(mockFoodRef);
-        when(mockFoodRef.whereEqualTo(anyString(), anyString())).thenReturn(mockTask);
-        when(mockTask.isSuccessful()).thenReturn(true);
-        when(mockTask.getResult()).thenReturn(mockQuerySnapshot);
+        OngoingStubbing<Query> queryOngoingStubbing = when(mockFoodRef.whereEqualTo(anyString(), anyString())).thenReturn(mockTask);
+
+        doReturn(true).when(mockTask).isSuccessful();
+        doReturn(mockQuerySnapshot).when(mockTask).getResult();
+
         when(mockQuerySnapshot.iterator()).thenReturn(Collections.singletonList(mockDocument).iterator());
 
         journalEntry = new Journal_entry();
         journalEntry.db = mockFirestore;
     }
+
+
 
     @Test
     public void testHandleButtonClick() {

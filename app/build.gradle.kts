@@ -1,3 +1,5 @@
+val testImplementation: Unit
+
 plugins {
     id("com.android.application")
     // Google services Gradle plugin
