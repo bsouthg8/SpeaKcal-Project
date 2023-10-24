@@ -182,7 +182,7 @@ public class Journal_entry extends AppCompatActivity {
         });
     }
 
-    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType, String targetDate) {
+    public void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType, String targetDate) {
         String userInput = editText.getText().toString();
 
         if (!userInput.isEmpty()) {
