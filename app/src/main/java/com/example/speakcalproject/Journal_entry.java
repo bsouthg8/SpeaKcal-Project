@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -193,6 +194,9 @@ public class Journal_entry extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void handleItemClick(int position, ArrayList<Pair<String, String>> foodListBreakfast, ListView listViewBreakfast) {
     }
 
 
