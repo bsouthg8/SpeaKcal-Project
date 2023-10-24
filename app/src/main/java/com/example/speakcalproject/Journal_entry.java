@@ -53,9 +53,9 @@ public class Journal_entry extends AppCompatActivity {
     EditText editTextBreakfast, editTextLunch, editTextDinner;
     FirebaseFirestore db;
     CollectionReference foodRef;
-    ArrayList<Pair<String, String>> foodListBreakfast = new ArrayList<>();
-    ArrayList<Pair<String, String>> foodListLunch = new ArrayList<>();
-    ArrayList<Pair<String, String>> foodListDinner = new ArrayList<>();
+    private List<FoodEntry> foodListBreakfast = new ArrayList<>();
+    private List<FoodEntry> foodListLunch = new ArrayList<>();
+    private List<FoodEntry> foodListDinner = new ArrayList<>();
 
     private String targetDate;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -95,16 +95,16 @@ public class Journal_entry extends AppCompatActivity {
 
         // Set List View onClick listeners
         listViewBreakfast.setOnItemClickListener((parent, view, position, id) -> {
-            Pair<String, String> clickedFood = foodListBreakfast.get(position);
-            showFoodDetailsDialog(clickedFood, foodListBreakfast, listViewBreakfast, "Breakfast");
+            FoodEntry clickedFoodEntry = foodListBreakfast.get(position);
+            showFoodDetailsDialog(clickedFoodEntry, foodListBreakfast, listViewBreakfast, "Breakfast", clickedFoodEntry.getDateTime());
         });
         listViewLunch.setOnItemClickListener((parent, view, position, id) -> {
-            Pair<String, String> clickedFood = foodListLunch.get(position);
-            showFoodDetailsDialog(clickedFood, foodListLunch, listViewLunch, "Lunch");
+            FoodEntry clickedFoodEntry = foodListLunch.get(position);
+            showFoodDetailsDialog(clickedFoodEntry, foodListLunch, listViewLunch, "Lunch", clickedFoodEntry.getDateTime());
         });
         listViewDinner.setOnItemClickListener((parent, view, position, id) -> {
-            Pair<String, String> clickedFood = foodListDinner.get(position);
-            showFoodDetailsDialog(clickedFood, foodListDinner, listViewDinner, "Dinner");
+            FoodEntry clickedFoodEntry = foodListDinner.get(position);
+            showFoodDetailsDialog(clickedFoodEntry, foodListDinner, listViewDinner, "Dinner", clickedFoodEntry.getDateTime());
         });
 
 
@@ -182,7 +182,7 @@ public class Journal_entry extends AppCompatActivity {
         });
     }
 
-    private void handleButtonClick(EditText editText, ArrayList<Pair<String, String>> foodList, ListView listView, String mealType, String targetDate) {
+    private void handleButtonClick(EditText editText, List<FoodEntry> foodList, ListView listView, String mealType, String targetDate) {
         String userInput = editText.getText().toString();
 
         if (!userInput.isEmpty()) {
@@ -192,11 +192,10 @@ public class Journal_entry extends AppCompatActivity {
                         String name = document.getString("Name");
                         String amount = document.getString("Amount");
                         if (name != null && amount != null) {
-                            foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
-                            float calorieAmount = Float.parseFloat(amount);
-
+                            FoodEntry entry = new FoodEntry(name, Float.parseFloat(amount), targetDate, mealType);
+                            foodList.add(entry);
                             // Save the food entry to Firestore for the user
-                            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), name, calorieAmount, mealType, targetDate);
+                            UserDatabaseManagement.addCalorieToUser(getApplicationContext(), name, entry.getCalories(), mealType, targetDate);
                         }
                     }
                     updateListView(foodList, listView);
@@ -208,8 +207,8 @@ public class Journal_entry extends AppCompatActivity {
         editText.setText("");
     }
 
-    private void updateListView(ArrayList<Pair<String, String>> foodList, ListView listView) {
-        ArrayAdapter<Pair<String, String>> adapter = new ArrayAdapter<Pair<String, String>>(this, R.layout.list_item_layout, foodList) {
+    private void updateListView(List<FoodEntry> foodList, ListView listView) {
+        ArrayAdapter<FoodEntry> adapter = new ArrayAdapter<FoodEntry>(this, R.layout.list_item_layout, foodList) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -220,14 +219,13 @@ public class Journal_entry extends AppCompatActivity {
                 } else {
                     view = convertView;
                 }
-
-                Pair<String, String> pair = getItem(position);
+                FoodEntry entry = (FoodEntry) getItem(position);
                 TextView text1 = view.findViewById(R.id.text1);
                 TextView text2 = view.findViewById(R.id.text2);
 
-                if (pair != null) {
-                    text1.setText(pair.first);
-                    text2.setText(pair.second);
+                if (entry != null) {
+                    text1.setText("Food: " + entry.getFoodName());
+                    text2.setText("Calories: " + entry.getCalories());
                 }
                 return view;
             }
@@ -235,7 +233,7 @@ public class Journal_entry extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-    private void showFoodDetailsDialog(Pair<String, String> clickedFood, List<Pair<String, String>> foodList, ListView listView, String mealType, String dateTime) {
+    private void showFoodDetailsDialog(FoodEntry clickedFood, List<FoodEntry> foodList, ListView listView, String mealType, String dateTime) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Inflate the dialog_edit_entry XML layout
@@ -250,8 +248,8 @@ public class Journal_entry extends AppCompatActivity {
         Button btnSave = dialogView.findViewById(R.id.btnSave);
         Button btnDelete = dialogView.findViewById(R.id.btnDelete);
 
-        editFoodName.setText(clickedFood.first);
-        editCalories.setText(clickedFood.second);
+        editFoodName.setText(clickedFood.getFoodName());
+        editCalories.setText(String.valueOf(clickedFood.getCalories()));
 
         // Setup spinner
         String[] foodCategories = getResources().getStringArray(R.array.food_categories);
@@ -266,11 +264,12 @@ public class Journal_entry extends AppCompatActivity {
             String newCalories = editCalories.getText().toString();
 
             // Update the clickedFood details and update the database
-            clickedFood = new Pair<>(newFoodName, newCalories);
+            clickedFood.setFoodName(newFoodName);
+            clickedFood.setCalories(Float.parseFloat(newCalories));
             UserDatabaseManagement.updateFoodEntry(this, clickedFood, mealType, dateTime);
 
             // Refresh the ListView
-            ArrayAdapter<Pair<String, String>> adapter = (ArrayAdapter<Pair<String, String>>) listView.getAdapter();
+            ArrayAdapter<FoodEntry> adapter = (ArrayAdapter<FoodEntry>) listView.getAdapter();
             adapter.notifyDataSetChanged();
 
             Toast.makeText(this, "Entry updated", Toast.LENGTH_SHORT).show();
@@ -283,18 +282,17 @@ public class Journal_entry extends AppCompatActivity {
             UserDatabaseManagement.removeFoodEntry(this, clickedFood, mealType, dateTime);
 
             // Refresh the ListView
-            ArrayAdapter<Pair<String, String>> adapter = (ArrayAdapter<Pair<String, String>>) listView.getAdapter();
+            ArrayAdapter<FoodEntry> adapter = (ArrayAdapter<FoodEntry>) listView.getAdapter();
             adapter.notifyDataSetChanged();
 
             Toast.makeText(this, "Entry deleted", Toast.LENGTH_SHORT).show();
         });
 
-
         // Display the dialog
         builder.create().show();
     }
 
-    private void loadSavedDataByMealType(String mealType, ArrayList<Pair<String, String>> foodList, ListView listView, String targetDate) {
+    private void loadSavedDataByMealType(String mealType, List<FoodEntry> foodList, ListView listView, String targetDate) {
         // Clear the list first
         foodList.clear();
 
@@ -317,14 +315,15 @@ public class Journal_entry extends AppCompatActivity {
                                         if (entryDate.equals(targetDate)) {
                                             String name = (String) foodData.get("foodName");
                                             float amount = ((Number) foodData.get("calories")).floatValue();
-                                            foodList.add(new Pair<>("Food: " + name, "Calories: " + amount));
+                                            foodList.add(new FoodEntry(name, amount, entryDateTime, mealType));
                                         }
                                     }
                                 } else if (value instanceof String) {
                                     // Handle the old format (String)
                                     String[] parts = ((String) value).split(", ");
                                     if (parts.length == 3 && mealType.equals(parts[2])) {
-                                        foodList.add(new Pair<>("Food: " + parts[0], "Calories: " + parts[1]));
+                                        // Use targetDate as the date since the old format doesn't contain the exact dateTime
+                                        foodList.add(new FoodEntry(parts[0], Float.parseFloat(parts[1]), targetDate, mealType));
                                     }
                                 }
                             }

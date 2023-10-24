@@ -80,8 +80,14 @@ public class UserDatabaseManagement {
         }
     }
 
-    public static void updateFoodEntry(Context context, Pair<String, String> clickedFood, String mealType, String dateTime) {
+    public static void updateFoodEntry(Context context, FoodEntry clickedFood, String mealType, String dateTime) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(clickedFood.getFoodName() == null || clickedFood.getFoodName().isEmpty()) {
+            Toast.makeText(context, "DateTime is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (currentUser != null) {
             String userID = currentUser.getUid();
 
@@ -94,8 +100,8 @@ public class UserDatabaseManagement {
 
                         if (mealData != null) {
                             // Update the entry with new details
-                            mealData.put("foodName", clickedFood.first);
-                            mealData.put("calories", Float.parseFloat(clickedFood.second));
+                            mealData.put("foodName", clickedFood.getFoodName());
+                            mealData.put("calories", clickedFood.getCalories());
                             existingFoodData.put(dateTime, mealData);
 
                             // Update the document with the modified food data
@@ -108,12 +114,13 @@ public class UserDatabaseManagement {
                     }
                 } else {
                     // Handle failure
+                    Toast.makeText(context, "Error fetching data from database", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
 
-    public static void removeFoodEntry(Context context, Pair<String, String> clickedFood, String mealType, String dateTime) {
+    public static void removeFoodEntry(Context context, FoodEntry clickedFood, String mealType, String dateTime) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String userID = currentUser.getUid();
@@ -138,10 +145,12 @@ public class UserDatabaseManagement {
                     }
                 } else {
                     // Handle failure
+                    Toast.makeText(context, "Error fetching data from database", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
+
 
     //When need to retrieve user data
     //user method like below:
