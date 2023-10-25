@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView"
@@ -15,12 +14,22 @@
         android:gravity="left"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:paddingLeft="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingLeft="20dp"
+        android:paddingBottom="10dp"/>
 
+    <TextView
+        android:id="@+id/dailyReportLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Report"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"/>
 
-    <!-- Second Label - Weekly Report -->
     <com.example.speakcalproject.CircularProgressBar
         android:id="@+id/progressBar"
         android:layout_width="300dp"
@@ -36,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Weekly Report"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -77,7 +77,7 @@ public class CircularProgressBar extends View {
         canvas.drawArc(oval,135,275,false,paint);
 
         if(angle <= 275){
-            paint.setColor(Color.BLACK);
+            paint.setColor(Color.parseColor("#923D00"));
             canvas.drawArc(oval,135,angle,false,paint);
         } else {
             paint.setColor(Color.RED);

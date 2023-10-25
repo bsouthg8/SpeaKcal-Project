@@ -29,6 +29,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private TextView dailyReportLabel;
     private ImageView imageView;
     private String userName;
     private Map<String, Object> userInfo;
@@ -36,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private CircularProgressBar progressBar;
     private double limitedCalories;
     private double totalCalories;
-    private int mCurrentSelectedItemId = R.id.navigation_home; // default item
-    FirebaseFirestore firestore;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         pieChart1 = findViewById(R.id.pieChart2);
         progressBar = findViewById(R.id.progressBar);
+        dailyReportLabel = findViewById(R.id.dailyReportLabel);
 
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
                 userInfo = userData;
                 userName = (String) userData.get("username");
-                textView.setText("Welcome back\n" + userName);
+                textView.setText("Welcome back!\n" + userName);
                 limitedCalories = (Double) userData.get("calories limitation");
 
                 try {
@@ -94,14 +93,14 @@ public class MainActivity extends AppCompatActivity {
                         pastTotalCalories = pastDayLimit;
                     }
                     double totalPercentage1 = ((pastDayLimit - pastTotalCalories) / pastDayLimit) * 100;
-                    pastEntries.add(new PieEntry(new Float(pastTotalCalories/pastDayLimit) * 100,"Taken"));
+                    pastEntries.add(new PieEntry(new Float(pastTotalCalories/pastDayLimit) * 100,"Amount Consumed"));
                     //just testing now
-                    pastEntries.add(new PieEntry(new Float(totalPercentage1) ,"Left"));
+                    pastEntries.add(new PieEntry(new Float(totalPercentage1) ,"Amount Remaining"));
 
-                    PieDataSet pastDataSet = new PieDataSet(pastEntries,"Total Calories");
+                    PieDataSet pastDataSet = new PieDataSet(pastEntries,"");
                     pastDataSet.setValueTextSize(20f);
                     ArrayList<Integer> pastColors = new ArrayList<>();
-                    pastColors.add(getResources().getColor(R.color.colorAccent));
+                    pastColors.add(getResources().getColor(R.color.orangeMainVariant));
                     pastColors.add(getResources().getColor(R.color.colorGrey));
                     pastDataSet.setColors(pastColors);
 
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 myApp.setGlobalData((HashMap<String, Object>) userData);
                 userInfo = userData;
                 userName = (String) userData.get("username");
-                textView.setText("Welcome back\n"+userName);
+                textView.setText("Welcome back!\n"+userName);
 
                 try {
                     totalCalories = getCurrentDaysCalories(formattedCurrentDate);

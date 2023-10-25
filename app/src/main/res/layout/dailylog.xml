@@ -7,12 +7,24 @@
     tools:context=".Journal_entry">
 
     <TextView
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Date:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/currentDateTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
         android:id="@+id/currentDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="28dp"
-        android:padding="10dp"
         android:text="Date goes here"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -214,5 +226,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/list2_ID" />
+
+<!--    <fragment
+        android:id="@+id/speechFragment"
+        android:name="com.example.speakcalproject.SpeechToTextFragment"
+        android:layout_width="410dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="57dp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" /> -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

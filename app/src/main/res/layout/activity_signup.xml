@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundimage"
+    android:background="@drawable/background_image"
     android:orientation="vertical"
     android:padding="48dp"
     tools:context=".Signup">

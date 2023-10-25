@@ -45,6 +45,7 @@ public class PhotoRecognition extends AppCompatActivity {
     private FirebaseFirestore ff;
     private String targetDate;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private TextView instructions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,8 @@ public class PhotoRecognition extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         FirebaseApp.initializeApp(getApplicationContext());
         ff = FirebaseFirestore.getInstance();
-
+        instructions = findViewById(R.id.instructions);
+        instructions.setText("Please select one of the buttons below:");
         // Bottom navigation
         setupBottomNav();
 
@@ -135,6 +137,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 image = Bitmap.createScaledBitmap(image,224,224,false);
                 classifyImage(image);
+                instructions.setText("");
             }else if (requestCode == 1){
                 Uri dat = data.getData();
                 Bitmap image = null;
@@ -147,6 +150,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 image = Bitmap.createScaledBitmap(image,224,224,false);
                 classifyImage(image);
+                instructions.setText("");
             }
         } else if (resultCode == RESULT_OK && requestCode == 2) {
             if(data != null) {
@@ -156,6 +160,7 @@ public class PhotoRecognition extends AppCompatActivity {
 
                 // Show the dialog for the user to select a MealType
                 showMealTypeDialog();
+                instructions.setText("");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

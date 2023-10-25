@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +23,8 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private TextView username;
+    private TextView achievementsInfo;
     private EditText editTextName;
     private EditText editTextRewards;
     private ImageView imageViewProfilePic;
@@ -37,14 +40,22 @@ public class ProfileActivity extends AppCompatActivity {
         editTextRewards = findViewById(R.id.editTextRewards);
         editTextRewards.setVisibility(View.INVISIBLE);
         // Initialize UI elements
-        editTextName = findViewById(R.id.editTextName);
-        imageViewProfilePic = findViewById(R.id.imageViewProfilePic);
-        Button buttonSave = findViewById(R.id.buttonSave);
-        Button buttonSelectImage = findViewById(R.id.buttonSelectImage);
+        //editTextName = findViewById(R.id.editTextName);
+        //imageViewProfilePic = findViewById(R.id.imageViewProfilePic);
+        //Button buttonSave = findViewById(R.id.buttonSave);
+        //Button buttonSelectImage = findViewById(R.id.buttonSelectImage);
         changeCaloriesLimitation = findViewById(R.id.buttonChangeCaloriesLimitation);
+        username = findViewById(R.id.username_display);
+        achievementsInfo = findViewById(R.id.achievementsInfo);
+        achievementsInfo.setText("Current User Achievements:");
 
         MyApplication myApp = (MyApplication) getApplication();
         HashMap<String, Object> userInfo = myApp.getGlobalData();
+
+        String userName = (String) userInfo.get("username");
+        username.setText("@"+userName);
+
+
 
         if(userInfo.get("reward") != null) {
             HashMap<String, Object> reward = (HashMap<String, Object>) userInfo.get("reward");
@@ -61,15 +72,15 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
 
         // Set initial UI states
-        String username = sharedPreferences.getString("username", "");
-        editTextName.setText(username);
+        //String username = sharedPreferences.getString("username", "");
+        //editTextName.setText(username);
 
         // Bottom navigation
         setupBottomNav();
 
         // Event listeners
-        buttonSave.setOnClickListener(v -> saveProfileData());
-        buttonSelectImage.setOnClickListener(v -> openImageSelection());
+        //buttonSave.setOnClickListener(v -> saveProfileData());
+        //buttonSelectImage.setOnClickListener(v -> openImageSelection());
 
         changeCaloriesLimitation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,22 +120,22 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void saveProfileData() {
+/*    private void saveProfileData() {
         String name = editTextName.getText().toString();
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("username", name);
         editor.apply();
-    }
+    }*/
 
-    private void openImageSelection() {
+/*    private void openImageSelection() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
+    }*/
 
-    @Override
+/*    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -136,7 +147,7 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     private void showChangeCaloriesLimitDialog() {
         MyApplication myApp = (MyApplication) getApplication();

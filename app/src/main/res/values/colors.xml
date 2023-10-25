@@ -10,4 +10,6 @@
     <color name="colorAccent">#9C27B0</color>
     <color name="colorYellow">#FFBF00</color>
     <color name="colorGrey">#808080</color>
+    <color name="orangeMain">#CC5600</color>
+    <color name="orangeMainVariant">#923D00</color>
 </resources>

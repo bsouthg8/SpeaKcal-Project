@@ -56,7 +56,6 @@ public class Journal_entry extends AppCompatActivity {
     private List<FoodEntry> foodListBreakfast = new ArrayList<>();
     private List<FoodEntry> foodListLunch = new ArrayList<>();
     private List<FoodEntry> foodListDinner = new ArrayList<>();
-
     private String targetDate;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -115,6 +114,8 @@ public class Journal_entry extends AppCompatActivity {
 
         TextView currentDateTextView = findViewById(R.id.currentDateTextView);
         currentDateTextView.setText(targetDate);
+        TextView dateTextView = findViewById(R.id.dateText);
+        dateTextView.setText("Date:");
         Button prevButton = findViewById(R.id.prevButton);
         Button nextButton = findViewById(R.id.nextButton);
 
