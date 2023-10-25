@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_image"
     android:orientation="vertical"
-    android:background="@drawable/backgroundimage"
     android:padding="48dp"
     tools:context=".Login">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/speakcal_logo" />
 
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:hint="Username"
         android:inputType="text"
         android:textSize="21sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 
     <EditText
@@ -28,30 +33,31 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:textSize="21sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <Button
+        android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/login_button"
         android:text="Login"
         android:textAllCaps="false"
         android:textSize="21sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/signup_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Sign up here."
-        android:textColorLink="@android:color/holo_orange_dark"
         android:layout_gravity="center"
         android:clickable="true"
         android:onClick="openSignupActivity"
+        android:text="Don't have an account yet? \nSign up by pressing here"
+        android:textAlignment="center"
+        android:textColorLink="@android:color/holo_orange_dark"
         android:textSize="21sp"
-        android:textStyle="bold"/>
-
-
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"/>
 
 
 </LinearLayout>
